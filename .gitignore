@@ -1,0 +1,9 @@
+log
+*.iml
+.idea
+target
+.project
+.settings
+.DS_Store
+.springBeans
+APP_HOME_IS_UNDEFINED
