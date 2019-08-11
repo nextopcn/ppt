@@ -130,7 +130,7 @@ RedisCommands<String, String> sync = connection.sync();
 ...
 
 connection.close();
-redisClient.shutdown();
+client.shutdown();
 
 ```
 
@@ -150,7 +150,7 @@ RedisAdvancedClusterCommands<String, String> syncCommands = connection.sync();
 ...
 
 connection.close();
-clusterClient.shutdown();
+client.shutdown();
 
 ```
 
