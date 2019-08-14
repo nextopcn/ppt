@@ -8,6 +8,8 @@ Lettuce是基于Netty，并且线程安全的Redis客户端，支持同步异步
 4. HA
 5. 连接池
 6. 配置
+7. Event
+8. at-most-once 与 at-least-once
 
 ## 1. 简单使用
 
@@ -199,3 +201,68 @@ client.shutdownAsync();
 ```
 
 ## 6. 配置
+
+### 6.1. client options
+```java  
+
+RedisClient client = RedisClient.create();
+client.setOptions(ClientOptions.builder()
+      .autoReconnect(true)                     // 是否自动重连
+      .pingBeforeActivateConnection(false)     // 连接建立后发送PING命令
+      .cancelCommandsOnReconnectFailure(false) // 重连失败将取消排队的命令
+      .suspendReconnectOnProtocolFailure(true) // 协议失败将取消排队的命令
+      .requestQueueSize(Integer.MAX_VALUE)     // 排队的队列大小
+      .disconnectedBehavior(DEFAULT)           // 断线之后默认接受请求
+      .sslOptions(...)                         // 略
+      .socketOptions(...)                      // 主要设置connection timeout
+      .timeoutOptions(...)                     // 主要设置同步API的请求超时
+      .build());
+
+```
+
+### 6.2. client resource
+```java  
+
+ClientResources res = DefaultClientResources.builder()
+      .ioThreadPoolSize(4)                     // Number of processors
+      .computationThreadPoolSize(4)            // Number of processors
+      .eventLoopGroupProvider(...)             // 默认不设置
+      .eventExecutorGroup(...)                 // 默认不设置
+      .eventBus(...)                           // 默认不设置
+      .reconnectDelay(Delay.exponential())     // 默认每次重连增加间隔时间
+      .build();
+      
+RedisClient client = RedisClient.create(res);
+```
+
+### 6.3 共享与非共享的ClientResources
+
+```java  
+
+ClientResources res = DefaultClientResources.builder().build();
+RedisClient client = RedisClient.create(res); 
+
+client.shutdown();
+res.shutdown(); // 将res传入的时候，这个ClientResources就是共享的，需要单独关闭
+```
+
+## 7. Event
+
+```java  
+
+RedisClient client = RedisClient.create()
+EventBus eventBus = client.getresources().eventBus();
+
+eventBus.get().subscribe(e -> System.out.println(event));
+
+// ConnectedEvent
+// ConnectionActivatedEvent
+// DisconnectedEvent
+// ConnectionDeactivatedEvent
+// ReconnectFailedEvent
+
+```
+
+## 8. at-most-once 与 at-least-once
+
+* [Command-execution-reliability](https://github.com/lettuce-io/lettuce-core/wiki/Command-execution-reliability)
