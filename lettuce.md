@@ -77,7 +77,7 @@ RedisAsyncCommands<String, String> commands = connection.async();
 commands.setAutoFlushCommands(false);
 
 // perform a series of independent calls
-List<RedisFuture<?>> futures = Lists.newArrayList();
+List<RedisFuture<?>> futures = new ArrayList<>();
 for (int i = 0; i < iterations; i++) {
     futures.add(commands.set("key-" + i, "value-" + i));
     futures.add(commands.expire("key-" + i, 3600));
