@@ -114,11 +114,24 @@ opt.threadFactory(...);   // 设置线程池
 ```
 
 ### 4.2 行协议
-weather,location=us-midwest,season=summer temperature=82 1465839830100400200\n
-weather,location=us-midwest,season=winter temperature=10 1465839830100400200\n
+weather,location=us-midwest,season=summer temperature=82 1465839830100400200\n  
+weather,location=us-midwest,season=winter temperature=10 1465839830100400200\n  
 
 ### 4.3 Field 数据类型
 1. 浮点数   82,  10
 2. 整数     82i, 10i
 3. 字符串   "82"
 4. 布尔型   t,T,true,True,TRUE, f,F,false,False, FALSE
+
+## 5. 备份与还原
+
+```java  
+influxd backup -portable <path-to-backup>
+influxd restore -portable <path-to-backup>
+
+influxd backup -portable -database mydatabase -host <remote-node-IP>:8088 <path-to-backup>
+influxd restore -portable -db mydatabase <path-to-backup>
+
+influxd backup  -portable -database mytsd -start 2017-04-28T06:49:00Z -end 2017-04-28T06:50:00Z <path-to-backup>
+influxd restore -portable -db mytsd <path-to-backup>
+```
