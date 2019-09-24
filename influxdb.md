@@ -136,4 +136,4 @@ influxd backup  -portable -database mytsd -start 2017-04-28T06:49:00Z -end 2017-
 influxd restore -portable -db mytsd <path-to-backup>
 ```
 
-## 6. influxql
+## 6. influxQL
