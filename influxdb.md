@@ -137,3 +137,62 @@ influxd restore -portable -db mytsd <path-to-backup>
 ```
 
 ## 6. influxQL
+
+1. 查询语句
+```java  
+
+# 指定数据库
+use thorin;
+
+# 查询h2o_feet这个measurement所有tag和field
+SELECT * FROM "h2o_feet"
+
+# 查询h2o_feet这个measurement指定的tag和field
+SELECT "level description","location","water_level" FROM "h2o_feet"
+
+# 查询h2o_feet这个measurement所有的field
+SELECT *::field FROM "h2o_feet"
+
+# 查询时做基本的数学运算
+SELECT ("water_level" * 2) + 4 from "h2o_feet"
+
+# 指定全量的前缀， db名 + 保留策略 
+SELECT * FROM "NOAA_water_database"."autogen"."h2o_feet"
+
+# 如果不指定field, 那么不会返回任何数据，至少指定一个field 
+SELECT "location" FROM "h2o_feet"
+
+# 带有where条件的查询
+SELECT * FROM "h2o_feet" WHERE "water_level" > 8
+
+# where条件中进行数学运算
+SELECT * FROM "h2o_feet" WHERE "water_level" + 2 > 11.9
+
+# 多个条件
+SELECT "water_level" FROM "h2o_feet" WHERE "location" <> 'santa_monica' AND (water_level < -0.59 OR water_level > 9.95)
+
+# 指定时间段的where条件
+SELECT * FROM "h2o_feet" WHERE time > now() - 7d
+
+# group by 
+SELECT MEAN("water_level") FROM "h2o_feet" GROUP BY "location"
+
+# 多个条件group by 
+SELECT MEAN("index") FROM "h2o_quality" GROUP BY location,randtag
+
+# 以时间段group by
+SELECT COUNT("water_level") FROM "h2o_feet" WHERE "location"='coyote_creek' AND time >= '2015-08-18T00:00:00Z' AND time <= '2015-08-18T00:30:00Z' GROUP BY time(12m)
+
+# fill 操作， 在时间段内查不出数据的时候插入一条100
+SELECT MAX("water_level") FROM "h2o_feet" WHERE "location"='coyote_creek' AND time >= '2015-09-18T16:00:00Z' AND time <= '2015-09-18T16:42:00Z' GROUP BY time(12m) fill(100)
+
+# fill 操作， 在时间段内查不出数据的时候把之前一条数据插入进去
+SELECT MAX("water_level") FROM "h2o_feet" WHERE location = 'coyote_creek' AND time >= '2015-09-18T16:24:00Z' AND time <= '2015-09-18T16:54:00Z' GROUP BY time(12m) fill(previous)
+
+# 线性fill操作 在时间段内查不出数据的时候算出一个线性值
+SELECT MEAN("tadpoles") FROM "pond" WHERE time > '2016-11-11T21:24:00Z' AND time <= '2016-11-11T22:06:00Z' GROUP BY time(12m) fill(linear)
+
+# fill(null)
+SELECT MEAN("tadpoles") FROM "pond" WHERE time > '2016-11-11T21:24:00Z' AND time <= '2016-11-11T22:06:00Z' GROUP BY time(12m) fill(null)
+
+```
