@@ -195,4 +195,18 @@ SELECT MEAN("tadpoles") FROM "pond" WHERE time > '2016-11-11T21:24:00Z' AND time
 # fill(null)
 SELECT MEAN("tadpoles") FROM "pond" WHERE time > '2016-11-11T21:24:00Z' AND time <= '2016-11-11T22:06:00Z' GROUP BY time(12m) fill(null)
 
+# order by 
+SELECT "water_level" FROM "h2o_feet" WHERE "location" = 'santa_monica' ORDER BY time DESC
+
+# limit
+SELECT "water_level","location" FROM "h2o_feet" LIMIT 3
+
+# slimit <N> 选取N个series的所有数据
+SELECT "water_level" FROM "h2o_feet" GROUP BY * SLIMIT 1
+
+# offset
+SELECT "water_level","location" FROM "h2o_feet" LIMIT 3 OFFSET 3
+
+# soffset <N> 从第N个series开始选取
+SELECT "water_level" FROM "h2o_feet" GROUP BY * SLIMIT 1 SOFFSET 1
 ```
