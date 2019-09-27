@@ -227,6 +227,23 @@ CREATE RETENTION POLICY "one_day_only" ON "NOAA_water_database" DURATION 23h60m 
 DROP RETENTION POLICY "what_is_time" ON "NOAA_water_database"
 ```
 
+3. 重要的函数
+```java  
+
+COUNT()
+MEAN()
+MEDIAN()
+SUM()
+FIRST()
+LAST()
+MAX()
+MIN()
+TOP(field_key,N)
+ABS()
+CEIL()
+POW()
+ROUND()
+```
 ## 6. 备份与还原
 
 ```java  
