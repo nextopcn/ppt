@@ -1,7 +1,7 @@
 # influxdb
 
 ## 1. 简介
-InfluxDB是一个用于存储和分析时间序列数据的开源数据库。　时间序列数据库主要用于指处理带时间标签（按照时间的顺序变化，即时间序列化）的数据，带时间标签的数据也称为时间序列数据。
+InfluxDB是一个用于存储和分析时间序列数据的开源数据库。时间序列数据库主要用于指处理带时间标签（按照时间的顺序变化，即时间序列化）的数据，带时间标签的数据也称为时间序列数据。
 
 ## 2. 安装
 1. 硬件配置
@@ -42,7 +42,7 @@ time                      value                 app                facade       
 
 ```
 
-1. measurement : census
+1. measurement : system_jgroups
 2. field key : value
 3. tag key : app, facade, module
 4. field set : value = 1200, value = 10, value = 11, value = 3
@@ -56,18 +56,18 @@ app = server_1,     facade = bytes_sent,    module = web
 
 6. series :   
 ```java  
-rp = autogen, measurement = census, tag set = (app = web_admin_13, facade = bytes_sent,    module = web)  
-rp = autogen, measurement = census, tag set = (app = server_1,     facade = messages_sent, module = system)  
-rp = autogen, measurement = census, tag set = (app = web_admin_13, facade = messages_sent, module = web)  
-rp = autogen, measurement = census, tag set = (app = server_1,     facade = bytes_sent,    module = web)  
+rp = autogen, measurement = system_jgroups, tag set = (app = web_admin_13, facade = bytes_sent,    module = web)  
+rp = autogen, measurement = system_jgroups, tag set = (app = server_1,     facade = messages_sent, module = system)  
+rp = autogen, measurement = system_jgroups, tag set = (app = web_admin_13, facade = messages_sent, module = web)  
+rp = autogen, measurement = system_jgroups, tag set = (app = server_1,     facade = bytes_sent,    module = web)  
 ```
 
 7. point :  
 ```java  
-name: census
+name: system_jgroups
 -----------------
-time                    butterflies honeybees   location    scientist
-2015-08-18T00:00:00Z    1           30          1           perpetua
+time                      value                 app                facade                module
+2015-08-18T00:00:00Z      1200                web_admin_13       bytes_sent              web
 ```
 
 ### 层级结构
