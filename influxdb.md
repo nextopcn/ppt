@@ -82,11 +82,11 @@ database -> retention policy -> measurement -> point
 ## 4. 客户端
 
 ```java  
-            <dependency>
-                <groupId>org.influxdb</groupId>
-                <artifactId>influxdb-java</artifactId>
-                <version>2.15</version>
-            </dependency>
+<dependency>
+    <groupId>org.influxdb</groupId>
+    <artifactId>influxdb-java</artifactId>
+    <version>2.15</version>
+</dependency>
 ```
 
 ```java  
