@@ -264,7 +264,7 @@ influxd restore -portable -db mytsd <path-to-backup>
 
 # 关键配置项
 
-# influxdb联网收集信息选项，默认开启， 要设置成false
+# influxdb联网收集信息选项，默认开启，要设置为false
 reporting-disabled = false
 
 # 绑定的ip地址
