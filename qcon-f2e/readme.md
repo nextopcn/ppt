@@ -4,7 +4,7 @@ SPA -> PWA
 
 Hybrid -> 小程序
 
-> 扩展 web 应用边界, 提升 web 一样体验
+> 扩展 web 应用边界, 提升 web 应用体验
 > W3C 标准化
 
 
