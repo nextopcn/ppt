@@ -2,15 +2,23 @@
 ## 前端 - PWA
 
 
-### Why
+### PWA
 
-- app vs web
+`Progressive` Web App
 
-- AMP vs  渐进增强的 Web
+将 Web 和 App 各自的优势融合在一起,提升 Web App 的性能，改善 Web App 的用户体验
 
-- PWA
+- **白屏, 离线, 动画, 渲染等问题**
 
-> 将 Web 和 App 各自的优势融合在一起,提升 Web App 的性能，改善 Web App 的用户体验
+- **唤起**
+
+相关概念:
+
+- AMP
+
+- `PRPL` (push/preload, render, recache, lazy-load)
+
+
 
 
 ### 特点
@@ -25,22 +33,25 @@
   - 可安装 - 用户可以添加常用的 webapp 到桌面，免去去应用商店下载的麻烦
   - 可链接 - 通过链接即可分享内容，无需下载安装
 
-### 相关技术
+### 相关技术/API
 
 
 #### Web App Manifest
 
-入口
 
-`<link rel="manifest" href="/manifest.json">`
+```
+<link rel="manifest" href="/manifest.json">
+```
 
-https://developer.mozilla.org/en-US/docs/Web/Manifest
+[Manifest doc](https://developer.mozilla.org/en-US/docs/Web/Manifest)
+
+`入口`
+
 
 #### Service Worker
 
 
 - 改善应用对网络的依赖
-
 
   > Service Worker是PWA中必不可少的一个服务，主要提供资源缓存、离线访问等功能，并可动态进行数据更新.简单来说，Service Worker 就是一段运行在 Web 浏览器中，并为应用`管理缓存`的脚本，会拦截所有由应用发出的 HTTP 请求，并选择如何给出响应 (网络代理)
 
@@ -49,42 +60,84 @@ https://developer.mozilla.org/en-US/docs/Web/Manifest
 
 ![](https://yqfile.alicdn.com/08f326c3cae549f0408f0bb25624c191668bd25a.png)
 
-#### PUSH & NOTIFICATION
-
-
-![](http://blueskyawen.com/images/push-service2.png)
-
-`Web Push` 协议
-
-chrome:  Firebase FCM
+- 浏览器导航流程
 
 
 
+#### SYNC & PUSH  NOTIFICATION
+
+- SYNC: 后台处理请求
+- `Web Push` 协议 (chrome:  Firebase FCM)
+- 通知
+
+支持情况
 
 ### Project Fugu (フグ)
 
 ![](http://yanxuan.nosdn.127.net/c0683dfda92bd1d9e6439f36d0e7e551.png)
 
+更进一步大道 app 的能力
 
-##### Apis
+
+- 定义 api,补全功能
+- w3c 标准化推进
+-
+
+##### APIS...
 
 - badge
+
+```
+window.ExperimentalBadge.set(15);
+```
 
 - Native File System Api
 
 - NFC Api
 
+- Contract Picker Api
+
+- SMS Receiver Api
+
+- Wake Lock Api
+
 - Shape Detection Api
 
-[apis](https://docs.google.com/spreadsheets/d/1de0ZYDOcafNXXwMcg4EZhT0346QM-QFvZfoD8ZffHeA/edit#gid=557099940)
+```
+const faces = await new FaceDetector().detect(img);
+```
+
+- [apis](https://docs.google.com/spreadsheets/d/1de0ZYDOcafNXXwMcg4EZhT0346QM-QFvZfoD8ZffHeA/edit#gid=557099940)
+
+
+
+[miniapp 比较](https://w3c.github.io/miniapp/white-paper/comparison.html)
+
+
+##### 安全
+
+- https, iframe, 用户操作
+- 授权管理
+
 
 
 ##### Origin Trial
 
-chrome://flags
+相对比较成熟的Web Platform APIs的试验场，面向Web开发者有限 范围试用，收集反馈用来完善API标准以及实现。
 
-`<meta http-equiv="origin-trial" content="**your token**">`
 
+```
+<meta http-equiv="origin-trial" content="**your token**">
+```
+
+
+- [token](https://developers.chrome.com/origintrials/#/trials/active)
+- [chrome://flag](chrome://flags)
+
+
+### 其他 web 试验特性(补充)
+
+- [跳转优化 Portals](https://storage.googleapis.com/web-dev-assets/hands-on-portals/portals_h264.mp4)
 
 ### refs
 
