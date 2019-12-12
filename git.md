@@ -19,9 +19,10 @@
 
 1. 在develop分支误提交某个文件，本应该提交到release分支
 2. 在develop分支开发功能，要紧急解决一个在release分支的bug
-3. develop分支合并回master分支时，解决冲突
+3. release分支合并回develop分支时，解决冲突
 4. revert某一commit（包含解决冲突）
 5. 想在服务器部署某一个commit的代码
+6. 项目间同步代码
 
 ## 集中式git的一些技巧
 
