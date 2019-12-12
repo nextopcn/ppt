@@ -20,7 +20,7 @@
 1. 在develop分支误提交某个文件，本应该提交到release分支
 2. 在develop分支开发功能，要紧急解决一个在release分支的bug
 3. develop分支合并回master分支时，解决冲突
-4. revert某一commit
+4. revert某一commit（包含解决冲突）
 5. 想在服务器部署某一个commit的代码
 
 ## 集中式git的一些技巧
@@ -30,3 +30,10 @@
 3. 使用git merge -no-ff, 创建一个合并记录的commit, 表明此次合并过程
 4. 完全废弃本地提交， 使用git reset --hard origin/{branch}
 5. 合理使用git reset --soft --hard --mixed
+
+## 分布式git的一些技巧
+
+1. 使用rebase拉取上游代码（如果有冲突如何解决）
+2. 自己分支的多个提交合并成一个(整理要提PR的git log)
+3. master分支使用git merge -no-ff合并来记录合并过程
+4. 避免在master分支使用force push
