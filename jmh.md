@@ -22,6 +22,7 @@ public class ExampleBenchmark {
 	}
 	
 	@Benchmark
+	@BenchmarkMode(Mode.Throughput)
 	public void benchmark() { 
 		test.invoke();
 	}
@@ -404,3 +405,22 @@ for(int i = 0; i < iterations; i++) {
 ```
 
 [JMHSample_11_Loops](https://hg.openjdk.java.net/code-tools/jmh/file/b6f87aa2a687/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_11_Loops.java)
+
+# JMH可视化
+```java  
+
+        Options opt = new OptionsBuilder()
+                .include(LitePoolBenchmark.class.getSimpleName())
+                .warmupIterations(10)
+                .measurementIterations(10)
+                .forks(1)
+                .resultFormat(JSON)
+                .result("benchmark-" + System.currentTimeMillis() + ".json")
+                .build();
+        new Runner(opt).run();
+
+```
+
+* [JMH Visualizer](https://jmh.morethan.io/)
+* [Lite-pool Benchmark](https://github.com/nextopcn/lite-pool#6-benchmark)
+* [JMH samples](https://hg.openjdk.java.net/code-tools/jmh/file/b6f87aa2a687/jmh-samples/src/main/java/org/openjdk/jmh/samples/)
