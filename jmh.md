@@ -33,7 +33,7 @@ public class ExampleBenchmark {
 				.measurementIterations(5)
 				.warmupTime(TimeValue.seconds(1))
 				.measurementTime(TimeValue.seconds(1))
-				.shouldDoGC(true)
+				.shouldDoGC(true)                                      
 				.forks(1)
 				.build();
 		new Runner(opt).run();
@@ -93,6 +93,17 @@ ExampleBenchmark.benchmark  thrpt    5  382030089.293 ± 64227926.234  ops/s
 ```
 
 # JMH注解
+
+## BenchmarkMode注解
+
+```java  
+@BenchmarkMode(Mode.Throughput)
+@BenchmarkMode(Mode.AverageTime)
+@BenchmarkMode(Mode.SampleTime)
+@BenchmarkMode(Mode.SingleShotTime)
+@BenchmarkMode(Mode.All)
+
+```
 
 ## State注解 Setup TearDown注解
 
@@ -202,20 +213,20 @@ public class FastThreadLocalBenchmark {
 	
 	@Benchmark
 	@Fork(1)
-	public void benchThreadLocal() {
-		raw.set(value); raw.get();
+	public void benchThreadLocal(Blackhole bh) {
+		raw.set(value); bh.consume(raw.get());
 	}
 	
 	@Benchmark
 	@Fork(value = 1, jvmArgs = {"-Djmh.executor=CUSTOM", "-Djmh.executor.class=cn.nextop.erebor.common.util.concurrent.support.XThreadExecutor"})
-	public void benchFastThreadLocal() {
-		fast.set(value); fast.get();
+	public void benchFastThreadLocal(Blackhole bh) {
+		fast.set(value); bh.consume(fast.get());
 	}
 	
 	@Benchmark
 	@Fork(value = 1, jvmArgs = {"-Djmh.executor=CUSTOM", "-Djmh.executor.class=cn.nextop.erebor.common.util.concurrent.support.NettyExecutor"})
-	public void benchNettyFastThreadLocal() {
-		netty.set(value); netty.get();
+	public void benchNettyFastThreadLocal(Blackhole bh) {
+		netty.set(value); bh.consume(netty.get());
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -228,13 +239,168 @@ public class FastThreadLocalBenchmark {
 }
 
 Benchmark                                           (value)   Mode  Cnt          Score          Error  Units
-FastThreadLocalBenchmark.benchFastThreadLocal           abc  thrpt    5  193088333.586 ± 17097130.218  ops/s
-FastThreadLocalBenchmark.benchNettyFastThreadLocal      abc  thrpt    5  206931335.821 ± 18390810.648  ops/s
-FastThreadLocalBenchmark.benchThreadLocal               abc  thrpt    5  118572794.293 ± 73803453.678  ops/s
+FastThreadLocalBenchmark.benchFastThreadLocal           abc  thrpt    5  111152325.054 ±  4537967.385  ops/s
+FastThreadLocalBenchmark.benchNettyFastThreadLocal      abc  thrpt    5  135880432.285 ±  6920888.144  ops/s
+FastThreadLocalBenchmark.benchThreadLocal               abc  thrpt    5  105680948.033 ± 14024203.749  ops/s
 ```
 
 ## State Setup TearDown作用域
 
+```java  
 
+@State(Scope.Benchmark)
+@State(Scope.Thread)
+
+@Setup(Level.Trial)
+@Setup(Level.Iteration)
+@Setup(Level.Invocation)
+
+@TearDown(Level.Trial)
+@TearDown(Level.Iteration)
+@TearDown(Level.Invocation)
+
+```
+
+* 常用作用域组合
+
+```java  
+//
+@State(Scope.Benchmark) @Setup(Level.Trial)
+@State(Scope.Benchmark) @Setup(Level.Iteration)
+
+// 当带有Threads注解时(不常用)
+@State(Scope.Thread) @Setup(Level.Trial)
+@State(Scope.Thread) @Setup(Level.Iteration)
+
+```
+
+* 作用域等价代码`@State(Scope.Benchmark)`, `@Setup(Level.Trial)`
+
+```java  
+
+	@State(Scope.Benchmark)
+	public static class BenchmarkState {
+		private Test test;
+		
+		@Setup(Level.Trial)
+		public void setup() {
+			test = new Test();
+		}
+	}
+	
+	@Benchmark
+	public void benchmark(BenchmarkState state) { 
+		state.test.invoke();
+	}
+```
+
+```java  
+
+BenchmarkState state = new BenchmarkState();
+state.setup();
+
+for(int i = 0; i < iterations; i++) {
+	iteration(() -> benchmark(state));
+}
+
+```
+
+* 作用域等价代码`@State(Scope.Benchmark)`, `@Setup(Level.Iteration)`
+
+```java  
+
+	@State(Scope.Benchmark)
+	public static class BenchmarkState {
+		private Test test;
+		
+		@Setup(Level.Iteration)
+		public void setup() {
+			test = new Test();
+		}
+	}
+	
+	@Benchmark
+	public void benchmark(BenchmarkState state) { 
+		state.test.invoke();
+	}
+```
+
+```java  
+
+BenchmarkState state = new BenchmarkState();
+
+for(int i = 0; i < iterations; i++) {
+	state.setup()
+	iteration(() -> benchmark(state));
+}
+
+```
 
 ## 避免编译优化
+
+```java  
+	@Benchmark
+	@Fork(1)
+	public void benchThreadLocal() {
+		raw.set(value); raw.get();
+	}
+
+	@Benchmark
+	@Fork(1)
+	public void benchThreadLocal(Blackhole bh) {
+		raw.set(value); bh.consume(raw.get());
+	}
+```
+
+## 避免常量折叠
+```java  
+    private double x = Math.PI;
+
+    private final double wrongX = Math.PI;
+
+    @Benchmark
+    public double measureWrong_1() {
+        // This is wrong: the source is predictable, and computation is foldable.
+        return Math.log(Math.PI);
+    }
+
+    @Benchmark
+    public double measureWrong_2() {
+        // This is wrong: the source is predictable, and computation is foldable.
+        return Math.log(wrongX);
+    }
+
+    @Benchmark
+    public double measureRight() {
+        // This is correct: the source is not predictable.
+        return Math.log(x);
+    }
+```
+
+[JMHSample_10_ConstantFold](https://hg.openjdk.java.net/code-tools/jmh/file/b6f87aa2a687/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_10_ConstantFold.java)
+
+## 避免循环优化
+
+```java  
+
+    @Benchmark
+    public int measureRight() {
+        return (x + y);
+    }
+
+    private int reps(int reps) {
+        int s = 0;
+        for (int i = 0; i < reps; i++) {
+            s += (x + y);
+        }
+        return s;
+    }
+
+    @Benchmark
+    public int measureWrong_100() {
+        return reps(100);
+    }
+
+```
+
+[JMHSample_11_Loops](https://hg.openjdk.java.net/code-tools/jmh/file/b6f87aa2a687/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_11_Loops.java)
