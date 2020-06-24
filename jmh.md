@@ -337,6 +337,48 @@ for(int i = 0; i < iterations; i++) {
 
 ```
 
+* 作用域代码`@State(Scope.Thread)`, `@Setup(Level.Trial)`
+
+```java  
+
+	@State(Scope.Thread)
+	public static class BenchmarkState {
+		private Test test;
+		
+		@Setup(Level.Trial)
+		public void setup() {
+			test = new Test();
+		}
+	}
+	
+	@Benchmark
+	@Threads(5)
+	public void benchmark(BenchmarkState state) {
+		state.test.invoke();
+	}
+```
+
+* 作用域代码`@State(Scope.Thread)`, `@Setup(Level.Iteration)`
+
+```java  
+
+	@State(Scope.Thread)
+	public static class BenchmarkState {
+		private Test test;
+		
+		@Setup(Level.Iteration)
+		public void setup() {
+			test = new Test();
+		}
+	}
+	
+	@Benchmark
+	@Threads(5)
+	public void benchmark(BenchmarkState state) {
+		state.test.invoke();
+	}
+```
+
 ## 避免编译优化
 
 ```java  
