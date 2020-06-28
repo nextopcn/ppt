@@ -120,8 +120,8 @@ public class ExampleBenchmark {
 	}
 	
 	@Benchmark
-	public void benchmark(ExampleBenchmark that) { 
-		that.test.invoke();
+	public void benchmark() { 
+		test.invoke();
 	}
 }
 ```
