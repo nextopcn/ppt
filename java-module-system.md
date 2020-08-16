@@ -48,7 +48,15 @@ module com.moilioncircle.redis.replicator {
 * module文件的语法
 
 ```java  
-
+module name
+open module name
+exports package
+exports package to package
+opens package
+opens package to package
+require module
+require transitive module
+require static module 
 
 ```
 
