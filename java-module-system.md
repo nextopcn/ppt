@@ -82,8 +82,6 @@ provides interface with implementment
 uses interface;
 ```
 
-* 看[module-demo](https://github.com/leonchen83/module-demo)的实际的例子
-
 ## Automatic module
 
 * MANIFEST.MF文件内容
@@ -142,6 +140,10 @@ sub-module1-1.0-SNAPSHOT.jar 则会自动生成一个module sub-module1@1.0-SNAP
 如果未命名模块依赖Explicit module,那么需要在运行时添加--add-modules ${explicit-module})
 如果未命名模块依赖Automatic module,那么不需要在运行时添加--add-modules
 ```
+
+## 实际例子
+
+* [module-demo](https://github.com/leonchen83/module-demo)
 
 ## 应用jlink进行JRE裁剪
 
