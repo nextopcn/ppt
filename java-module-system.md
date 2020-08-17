@@ -125,12 +125,13 @@ sub-module1-1.0-SNAPSHOT.jar 则会自动生成一个module sub-module1@1.0-SNAP
 
 1. exports 所有 package
 2. requires 所有在 module path上的模块(包括Unnamed module)
-3. 在META-INF/services里的SPI默认会导出(类似自动加上provides interface with implementment)
+3. 在--module-path上的jar包会自动成为Automatic module
 
 ## Unnamed module的性质
 
 1. exports 所有 package
 2. requires 所有在 module path上的模块包括其他Unnamed module
+3. 在--class-path参数上的jar包会自动成为Unnamed module
 
 ```
 如果依赖Explicit module,那么需要在运行时添加--add-modules ${explicit-module})
