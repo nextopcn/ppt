@@ -72,7 +72,7 @@ require module
 // 引入一个module, 并把依赖传递给上层
 require transitive module
 
-// 引入一个module, 当这个module没被运行时使用时，可以不加如到运行时环境类似maven scope optional
+// 引入一个module, 当这个module没被运行时使用时，可以不加入到运行时环境类似maven scope optional
 require static module 
 
 // java SPI, 对interface提供某个实现
