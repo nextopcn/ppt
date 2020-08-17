@@ -127,6 +127,11 @@ sub-module1-1.0-SNAPSHOT.jar 则会自动生成一个module sub-module1@1.0-SNAP
 2. requires 所有在 module path上的模块(包括Unnamed module)
 3. 在--module-path上的jar包会自动成为Automatic module
 
+```
+如果自动模块依赖Explicit module,那么需要在运行时添加--add-modules ${explicit-module})
+如果自动模块依赖Automatic module,那么不需要在运行时添加--add-modules
+```
+
 ## Unnamed module的性质
 
 1. exports 所有 package
@@ -134,8 +139,8 @@ sub-module1-1.0-SNAPSHOT.jar 则会自动生成一个module sub-module1@1.0-SNAP
 3. 在--class-path参数上的jar包会自动成为Unnamed module
 
 ```
-如果依赖Explicit module,那么需要在运行时添加--add-modules ${explicit-module})
-如果依赖Automatic module,那么不需要在运行时添加--add-modules
+如果未命名模块依赖Explicit module,那么需要在运行时添加--add-modules ${explicit-module})
+如果未命名模块依赖Automatic module,那么不需要在运行时添加--add-modules
 ```
 
 ## 应用jlink进行JRE裁剪
