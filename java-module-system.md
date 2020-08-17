@@ -1,11 +1,11 @@
 # Java9 module简介
 
 # module的三种形式
-* Full qualified name module (带module-info.java文件)
+* Explicit module (带module-info.java文件)
 * Automatic module (META-INF/MANIFEST.MF上有Automatic-Module-Name属性)
 * Unnamed module (未升级到java9模块系统的遗留jar包)
 
-## Full qualified name module
+## Explicit module
 
 * 一个简单的例子
 
@@ -117,16 +117,69 @@ Automatic-Module-Name: module1
 
 ## Automatic module的性质
 
-1. exports 所有package
-2. requires 所有在module path上的模块(包括Unnamed module)
+1. exports 所有 package
+2. requires 所有在 module path上的模块(包括Unnamed module)
 3. 在META-INF/services里的SPI默认会导出(类似自动加上provides interface with implementment)
 
 ## Unnamed module的性质
 
+1. exports 所有 package
+2. requires 所有在 module path上的模块包括其他Unnamed module
 
+```
+如果依赖Explicit module,那么需要在运行时添加--add-modules ${explicit-module})
+如果依赖Automatic module,那么不需要在运行时添加--add-modules
+```
 
+## 应用jlink进行JRE裁剪
 
-## 模块系统的一些工具链
-* jdeps
-* jmods
-* jlinks
+1. 创建jlink的maven module并依赖所有自己写的java模块
+```
+    <dependencies>
+        <dependency>
+            <groupId>cn.nextop</groupId>
+            <artifactId>main-demo</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.nextop</groupId>
+            <artifactId>sub-module1</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.nextop</groupId>
+            <artifactId>sub-module2</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+```
+2. 配置maven jlink plugin插件
+```
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <url>http://repository.apache.org/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jlink-plugin</artifactId>
+                <version>3.0.0-alpha-2-SNAPSHOT</version>
+                <extensions>true</extensions>
+            </plugin>
+        </plugins>
+    </build>
+```
+3. 在maven jlink module 下执行`mvn clean jlink:jlink`并解压`jlink-1.0-SNAPSHOT.zip`
+4. bin目录下执行`java --module main/cn.nextop.main.demo.Main`
