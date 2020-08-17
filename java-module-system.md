@@ -197,3 +197,10 @@ sub-module1-1.0-SNAPSHOT.jar 则会自动生成一个module sub-module1@1.0-SNAP
 ```
 3. 在maven jlink module 下执行`mvn clean jlink:jlink`并解压`jlink-1.0-SNAPSHOT.zip`
 4. bin目录下执行`java --module main/cn.nextop.main.demo.Main`
+
+
+## 参考文档
+* [migrate-to-java11](https://github.com/leonchen83/share/blob/master/java/migrate-to-java11.md)
+* [modules](https://www.logicbig.com/tutorials/core-java-tutorial/modules.html)
+* [understanding-java-9-modules](https://www.oracle.com/corporate/features/understanding-java-9-modules.html)
+* [java-9-modules-cheat-sheet](https://www.jrebel.com/blog/java-9-modules-cheat-sheet)
