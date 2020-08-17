@@ -1,6 +1,10 @@
 # Java9 module简介
 
+JDK9引入了一个新的特性叫做JPMS（Java Platform Module System），也可以叫做Project Jigsaw。模块化的本质就是将一个大型的项目拆分成为一个一个的模块，
+在module中会有元数据来描述该模块的信息和该模块与其他模块之间的关系。这些模块组合起来，构成了最后的运行程序。
+
 # module的三种形式
+
 * Explicit module (带module-info.java文件)
 * Automatic module (META-INF/MANIFEST.MF上有Automatic-Module-Name属性或者自动根据jar包生成一个module name)
 * Unnamed module (未升级到java9模块系统的遗留jar包)
