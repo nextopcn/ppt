@@ -2,7 +2,7 @@
 
 # module的三种形式
 * Explicit module (带module-info.java文件)
-* Automatic module (META-INF/MANIFEST.MF上有Automatic-Module-Name属性)
+* Automatic module (META-INF/MANIFEST.MF上有Automatic-Module-Name属性或者自动根据jar包生成一个module name)
 * Unnamed module (未升级到java9模块系统的遗留jar包)
 
 ## Explicit module
@@ -113,6 +113,12 @@ Automatic-Module-Name: module1
             </plugin>
         </plugins>
     </build>
+```
+
+* 利用jar包自动生成名字
+
+```
+sub-module1-1.0-SNAPSHOT.jar 则会自动生成一个module sub-module1@1.0-SNAPSHOT
 ```
 
 ## Automatic module的性质
