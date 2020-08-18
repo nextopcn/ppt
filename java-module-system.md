@@ -99,22 +99,22 @@ Automatic-Module-Name: module1
 * 利用maven jar plugin打包
 
 ```
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Automatic-Module-Name>module1</Automatic-Module-Name>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.2.0</version>
+            <configuration>
+                <archive>
+                    <manifestEntries>
+                        <Automatic-Module-Name>module1</Automatic-Module-Name>
+                    </manifestEntries>
+                </archive>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
 ```
 
 * 利用jar包自动生成名字
@@ -153,58 +153,236 @@ sub-module1-1.0-SNAPSHOT.jar 则会自动生成一个module sub-module1@1.0-SNAP
 
 1. 创建jlink的maven module并依赖所有自己写的java模块
 ```
-    <dependencies>
-        <dependency>
-            <groupId>cn.nextop</groupId>
-            <artifactId>main-demo</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>cn.nextop</groupId>
-            <artifactId>sub-module1</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>cn.nextop</groupId>
-            <artifactId>sub-module2</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+<dependencies>
+    <dependency>
+        <groupId>cn.nextop</groupId>
+        <artifactId>main-demo</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>cn.nextop</groupId>
+        <artifactId>sub-module1</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>cn.nextop</groupId>
+        <artifactId>sub-module2</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <scope>compile</scope>
+    </dependency>
+</dependencies>
 ```
 2. 配置maven jlink plugin插件
 ```
-    <pluginRepositories>
-        <pluginRepository>
-            <id>apache.snapshots</id>
-            <url>http://repository.apache.org/snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-    
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-jlink-plugin</artifactId>
-                <version>3.0.0-alpha-2-SNAPSHOT</version>
-                <extensions>true</extensions>
-            </plugin>
-        </plugins>
-    </build>
+<pluginRepositories>
+    <pluginRepository>
+        <id>apache.snapshots</id>
+        <url>http://repository.apache.org/snapshots/</url>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </pluginRepository>
+</pluginRepositories>
+
+<build>
+    <plugins>
+        <plugin>
+            <artifactId>maven-jlink-plugin</artifactId>
+            <version>3.0.0-alpha-2-SNAPSHOT</version>
+            <extensions>true</extensions>
+        </plugin>
+    </plugins>
+</build>
 ```
 3. 在maven jlink module 下执行`mvn clean jlink:jlink`并解压`jlink-1.0-SNAPSHOT.zip`
 4. bin目录下执行`java --module main/cn.nextop.main.demo.Main`
 
+## Maven multiRelease与toolchain
+
+#### Maven multiRelease
+
+* [JEP238](http://openjdk.java.net/jeps/238)
+
+```java  
+jar结构
+
+A.class
+B.class
+C.class
+D.class
+META-INF/MANIFEST.MF { Multi-Release: true }
+         versions/9 /A.class
+                     B.class
+                 /10/A.class
+                     C.class
+```
+
+```java  
+
+	├── pom.xml
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   └── com
+│   │   │       └── baeldung
+│   │   │           └── multireleaseapp
+│   │   │               ├── DefaultVersion.java
+│   │   │               └── App.java
+│   │   └── java9
+│   │       └── com
+│   │           └── baeldung
+│   │               └── multireleaseapp
+│   │                   └── DefaultVersion.java
+
+```
+
+```java  
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-toolchains-plugin</artifactId>
+    <version>3.0.0</version>
+    <executions>
+        <execution>
+            <id>toolchain</id>
+            <goals>
+                <goal>toolchain</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <toolchains>
+            <jdk>
+                <version>9</version>
+            </jdk>
+            <jdk>
+                <version>1.8</version>
+            </jdk>
+        </toolchains>
+    </configuration>
+</plugin>
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.8.0</version>
+    <executions>
+        <execution>
+            <id>java-8</id>
+            <goals>
+                <goal>compile</goal>
+            </goals>
+            <configuration>
+                <jdkToolchain>
+                    <version>1.8</version>
+                </jdkToolchain>
+                <source>1.8</source>
+                <target>1.8</target>
+            </configuration>
+        </execution>
+        <execution>
+            <id>java-9</id>
+            <phase>compile</phase>
+            <goals>
+                <goal>compile</goal>
+            </goals>
+            <configuration>
+                <jdkToolchain>
+                    <version>9</version>
+                </jdkToolchain>
+                <release>9</release>
+                <compileSourceRoots>
+                    <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+                </compileSourceRoots>
+                <multiReleaseOutput>true</multiReleaseOutput>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-jar-plugin</artifactId>
+    <version>3.2.0</version>
+    <configuration>
+        <archive>
+            <manifestEntries>
+               <Multi-Release>true</Multi-Release>
+            </manifestEntries>
+        </archive>
+    </configuration>
+</plugin>
+```
+
+#### Toolchain
+
+```java  
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-toolchains-plugin</artifactId>
+    <version>3.0.0</version>
+    <executions>
+        <execution>
+            <id>toolchain</id>
+            <goals>
+                <goal>toolchain</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <toolchains>
+            <jdk>
+                <version>9</version>
+            </jdk>
+            <jdk>
+                <version>1.8</version>
+            </jdk>
+        </toolchains>
+    </configuration>
+</plugin>
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.8.1</version>
+    <executions>
+        <execution>
+            <id>base-compile</id>
+            <goals>
+                <goal>compile</goal>
+            </goals>
+            <configuration>
+                <jdkToolchain>
+                    <version>1.8</version>
+                </jdkToolchain>
+                <source>1.8</source>
+                <target>1.8</target>
+                <excludes>
+                    <exclude>module-info.java</exclude>
+                </excludes>
+            </configuration>
+        </execution>
+        <execution>
+            <id>default-compile</id>
+            <configuration>
+                <jdkToolchain>
+                    <version>9</version>
+                </jdkToolchain>
+                <release>9</release>
+            </configuration>
+        </execution>
+    </executions>
+    <configuration>
+        <encoding>UTF-8</encoding>
+    </configuration>
+</plugin>
+```
 
 ## 参考文档
 * [migrate-to-java11](https://github.com/leonchen83/share/blob/master/java/migrate-to-java11.md)
 * [modules](https://www.logicbig.com/tutorials/core-java-tutorial/modules.html)
 * [understanding-java-9-modules](https://www.oracle.com/corporate/features/understanding-java-9-modules.html)
 * [java-9-modules-cheat-sheet](https://www.jrebel.com/blog/java-9-modules-cheat-sheet)
+* [maven-multi-release-jars](https://www.baeldung.com/maven-multi-release-jars)
+* [maven multi-release](https://maven.apache.org/plugins/maven-compiler-plugin/multirelease.html)
