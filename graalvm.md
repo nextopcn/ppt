@@ -154,8 +154,139 @@ sys     0m0.019s
 
 ```
 
+### 处理反射, 动态代理, native方法调用以及资源加载
+
+* 如果代码包含反射, 动态代理, native方法调用以及资源加载. 那么需要配置如下配置文件
+
+```java  
 
 
+META-INF/
+└── native-image
+    └── groupID
+        └── artifactID
+            └── native-image.properties
+            └── jni-config.json
+            └── proxy-config.json
+            └── reflect-config.json
+            └── resource-config.json
+
+一个比较简单的方法是通过java agent自动拦截动态方法调用，自动生成配置文件
+$mkdir -p META-INF/native-image
+java -agentlib:native-image-agent=config-output-dir=META-INF/native-image class...
+```
+
+* 示例程序
+
+```java  
+
+import java.io.*;
+import java.util.*;
+import java.lang.reflect.*;
+
+class StringReverser {
+    static String reverse(String input) {
+        return new StringBuilder(input).reverse().toString();
+    }
+}
+
+class StringCapitalizer {
+    static String capitalize(String input) {
+        return input.toUpperCase();
+    }
+}
+
+interface XProxy { String invoke(); }
+
+public class Example {
+    public static void main(String[] args) throws Exception {
+        // reflection example
+        String className = args[0];
+        String methodName = args[1];
+        String input = args[2];
+        
+        Class<?> clazz = Class.forName(className);
+        Method method = clazz.getDeclaredMethod(methodName, String.class);
+        Object result = method.invoke(null, input);
+        System.out.println(result);
+        
+        // proxy example
+        XProxy x = (XProxy) Proxy.newProxyInstance(Example.class.getClassLoader(), new Class[]{XProxy.class}, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                return "proxy";
+            }
+        });
+        x.invoke();
+        
+        // resource example
+        Properties properties = new Properties();
+        try(InputStream in = Example.class.getClassLoader().getResourceAsStream("test.properties")) {
+            properties.load(in);
+        } catch (IOException e) {}
+    }
+}
+
+执行如下命令
+$ java -agentlib:native-image-agent=config-output-dir=META-INF/native-image Example StringReverser reverse "hello"
+$ java -agentlib:native-image-agent=config-merge-dir=META-INF/native-image Example StringCapitalizer capitalize "hello"
+
+```
+
+* 得到如下配置文件
+
+```
+$ cat jni-config.json 
+[
+{
+  "name":"java.lang.ClassLoader",
+  "methods":[
+    {"name":"getPlatformClassLoader","parameterTypes":[] }, 
+    {"name":"loadClass","parameterTypes":["java.lang.String"] }
+  ]
+},
+{
+  "name":"java.lang.ClassNotFoundException"
+},
+{
+  "name":"java.lang.NoSuchMethodError"
+},
+{
+  "name":"java.lang.String"
+}
+]
+
+$ cat proxy-config.json 
+[
+  ["XProxy"]
+]
+
+$ cat reflect-config.json 
+[
+{
+  "name":"StringCapitalizer",
+  "methods":[{"name":"capitalize","parameterTypes":["java.lang.String"] }]
+},
+{
+  "name":"StringReverser",
+  "methods":[{"name":"reverse","parameterTypes":["java.lang.String"] }]
+}
+]
+
+$ cat resource-config.json 
+{
+  "resources":[{"pattern":"\\Qtest.properties\\E"}],
+  "bundles":[]
+}
+```
+
+* 执行 native-image Example 生成example可执行文件
+
+```java  
+
+./example StringReverser reverse "hello"
+./example StringCapitalizer capitalize "hello"
+```
 # 6. References
 
 * [native-image](https://www.graalvm.org/reference-manual/native-image/)
