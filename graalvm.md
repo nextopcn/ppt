@@ -287,6 +287,47 @@ $ cat resource-config.json
 ./example StringReverser reverse "hello"
 ./example StringCapitalizer capitalize "hello"
 ```
+
+### 系统属性
+
+```
+public class App {
+    public static void main(String[] args) {
+        System.getProperties().list(System.out);
+    }
+}
+# 编译时可用
+native-image -Dfoo=bar App
+
+# 运行时可用
+app -Dfoo=bar
+```
+
+### 构建无任何依赖的static native image
+
+[StaticImages](https://www.graalvm.org/reference-manual/native-image/StaticImages/)
+```
+step1: build musl-1.2.0
+step2: build zlib-1.2.11
+step3: getting libstdc++
+step4: native-image --static --libc=musl ...
+```
+
+### native-image的限制
+
+1. Unsafe使用
+```
+Unsafe.objectFieldOffset()
+需要在reflect-config.json配置
+"fields" : [ { "name" : "hash", "allowUnsafeAccess" : true }, ... ]
+```
+2. JCA (Java Cryptography Architecture) 
+```
+开启JCA需要加如如下option --enable-all-security-services
+```
+3. class初始化可以添加参数`--initialize-at-build-time`在编译时初始化
+4. `invokedynamic`以及`cglib`等字节码工具不支持，`finalize`方法以及`Thread.stop`等方法不支持
+
 # 6. References
 
 * [native-image](https://www.graalvm.org/reference-manual/native-image/)
