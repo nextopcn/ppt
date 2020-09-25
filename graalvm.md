@@ -68,6 +68,13 @@ gu install native-image
 ## 4. 多语言
 
 ```
+# js 调用 R
+# Create a file polyglot.js:
+var array = Polyglot.eval("R", "c(1,2,42,4)")
+console.log(array[2]);
+
+js --polyglot --jvm polyglot.js
+42
 
 ```
 
