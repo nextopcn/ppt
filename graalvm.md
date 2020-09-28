@@ -335,7 +335,7 @@ app -Dfoo=bar
 ```
 step1: build musl-1.2.0
 step2: build zlib-1.2.11
-step3: getting libstdc++
+step3: cp /usr/lib/gcc/x86_64-redhat-linux/4.4.7/libstdc++.a /path/to/musl/lib
 step4: native-image --static --libc=musl ...
 ```
 
