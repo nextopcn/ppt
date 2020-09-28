@@ -73,8 +73,27 @@ gu install native-image
 var array = Polyglot.eval("R", "c(1,2,42,4)")
 console.log(array[2]);
 
-js --polyglot --jvm polyglot.js
+$ js --polyglot --jvm polyglot.js
 42
+
+# R 调用 js
+array <- eval.polyglot("js", "[1,2,42,4]")
+print(array[3L])
+
+$ Rscript --polyglot --jvm polyglot.R
+[1] 42
+
+# python 调用 js
+
+import polyglot
+array = polyglot.eval(language="js", string="[1,2,42,4]")
+print(array[2])
+
+$ graalpython --polyglot --jvm polyglot.py
+42
+
+# 多语言shell
+polyglot --jvm --shell
 
 ```
 
