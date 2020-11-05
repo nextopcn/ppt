@@ -151,6 +151,18 @@ public class MyBean {
 }
 ```
 
+## debug自动配置
+
+```
+java -cp $CLASSPATH Main --debug
+```
+
+## 禁用自动配置
+
+```
+@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
+```
+
 # 优雅关闭
 
 ```
@@ -172,9 +184,60 @@ public class Main {
 # application.properties
 
 ```
-
+# -Dspring.config.location=$location
+file:./config/
+file:./config/*/
+file:./
+classpath:/config/
+classpath:/
 ```
 
+```
+# -Dspring.profiles.active=$profile
+application-$profile.properties
+```
+
+```
+# -Dspring.config.name=$name
+$name.properties
+```
+
+# 类型安全的Configuration properties
+
+```
+@ConfigurationProperties("spring.my")
+public class MyProperties {
+
+    private boolean enabled;
+
+    private InetAddress remoteAddress;
+
+    public boolean isEnabled() { ... }
+
+    public void setEnabled(boolean enabled) { ... }
+
+    public InetAddress getRemoteAddress() { ... }
+
+    public void setRemoteAddress(InetAddress remoteAddress) { ... }
+}
+```
+
+```
+@Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(AcmeProperties.class)
+public class MyConfiguration {
+    @Bean
+    public MyBean myBean(MyProperties properties) {
+        return new MyBean(properties.isEnabled());
+    }
+}
+```
+
+```
+#application.properties
+spring.my.remote-address=127.0.0.1
+spring.my.enabled=true
+```
 # 非web的spring项目改造成spring-boot
 
 ```
