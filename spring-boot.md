@@ -224,7 +224,7 @@ public class MyProperties {
 
 ```
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(AcmeProperties.class)
+@EnableConfigurationProperties(MyProperties.class)
 public class MyConfiguration {
     @Bean
     public MyBean myBean(MyProperties properties) {
