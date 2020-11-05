@@ -110,11 +110,12 @@ public class TestController {
 {"response":"hello world"}
 ```
 
-# 项目结构
-
 # 自动配置
 
 # 优雅关闭
+
+# 既有的spring mvc项目升级到spring-boot
+
 
 # References
 
