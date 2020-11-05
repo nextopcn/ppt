@@ -183,8 +183,13 @@ public class Main {
 
 # application.properties
 
+1. 常用配置
+
+[common-application-properties](https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#common-application-properties)  
+
+2. -Dspring.config.location=$location
+
 ```
-# -Dspring.config.location=$location
 file:./config/
 file:./config/*/
 file:./
@@ -192,13 +197,15 @@ classpath:/config/
 classpath:/
 ```
 
+3. -Dspring.profiles.active=$profile
+
 ```
-# -Dspring.profiles.active=$profile
 application-$profile.properties
 ```
 
+4. -Dspring.config.name=$name
+
 ```
-# -Dspring.config.name=$name
 $name.properties
 ```
 
@@ -238,6 +245,7 @@ public class MyConfiguration {
 spring.my.remote-address=127.0.0.1
 spring.my.enabled=true
 ```
+
 # 非web的spring项目改造成spring-boot
 
 ```
@@ -265,8 +273,6 @@ public class Main {
 ```
 
 # spring boot 条件注解
-
-# spring boot 使用原则
 
 # References
 
