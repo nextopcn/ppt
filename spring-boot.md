@@ -112,10 +112,98 @@ public class TestController {
 
 # 自动配置
 
+1. @SpringBootApplication注解
+
+```
+1. @SpringBootConfiguration
+2. @EnableAutoConfiguration
+3. @ComponentScan
+```
+
+2. @EnableAutoConfiguration
+
+```
+├───src
+│   ├───main
+│   │   ├───java
+│   │   └───resources
+│           └───META-INF
+│               └───spring.factories
+
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.package.MyAutoConfiguration,\
+                                                               ....,\
+```
+
+3. MyAutoConfiguration 和 MyBean
+```
+@Configuration(proxyBeanMethods = false)
+public class MyAutoConfiguration {
+	@Bean
+	public MyBean myBean() {
+		return new MyBean();
+	}
+}
+
+public class MyBean {
+	public String hello() {
+		return "hello world";
+	}
+}
+```
+
 # 优雅关闭
+
+```
+public class Main {
+	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+	
+	@PreDestroy
+	public void shutdown() {
+		LOGGER.info("shutdown");
+	}
+	
+	public static void main(String[] args) {
+		SpringApplicationBuilder builder = new SpringApplicationBuilder();
+		builder.sources(Main.class).registerShutdownHook(true).run(args);
+	}
+}
+```
+
+# application.properties
+
+```
+
+```
+
+# 非web的spring项目改造成spring-boot
+
+```
+@SpringBootConfiguration
+@ImportResource({"classpath:your-spring-file.xml"})
+public class Main {
+	public static void main(String[] args) {
+		SpringApplicationBuilder builder = new SpringApplicationBuilder();
+		builder.sources(Main.class).registerShutdownHook(true).web(WebApplicationType.NONE).run(args);
+	}
+}
+```
 
 # 既有的spring mvc项目升级到spring-boot
 
+```
+@SpringBootConfiguration
+@ImportResource({"classpath:your-spring-webmvc-file.xml"})
+public class Main {
+	public static void main(String[] args) {
+		SpringApplicationBuilder builder = new SpringApplicationBuilder();
+		builder.sources(Main.class).registerShutdownHook(true).web(WebApplicationType.SERVLET).run(args);
+	}
+}
+```
+
+# spring boot 条件注解
+
+# spring boot 使用原则
 
 # References
 
