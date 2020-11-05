@@ -1,4 +1,4 @@
-#Mockito
+# Mockito
 
 ## 什么是Mock?
 
@@ -170,3 +170,175 @@ stringThat
 @see ArgumentMatchers
 ```
 
+6. 常用验证方式
+
+```java  
+
+		Mockee mockee = mock(Mockee.class);
+
+		when(mockee.test0(1)).thenReturn("1");
+
+		mockee.test0(1);
+		
+		verify(mockee, times(1)).test0(1);
+		verify(mockee, never()).test0(2);
+		verify(mockee, atMost(1)).test0(2);
+		verify(mockee, atLeast(1)).test0(2);
+
+```
+
+### 高级用法及原理
+
+1. Spying on real objects  
+
+```java  
+
+		Mockee mockee = new Mockee("mockee");
+		Mockee spyMockee = spy(mockee);
+		when(spyMockee.test1(2)).thenReturn("a");
+
+		System.out.println(spyMockee.test0(1)); // return "1"
+		System.out.println(spyMockee.test1(2)); // return "a"
+
+```
+
+```java  
+
+		Mockee mockee = new Mockee(null);
+		Mockee spyMockee = spy(mockee);
+		// when(spyMockee.test1(2)).thenReturn("a"); 空指针
+		doReturn("a").when(spyMockee).test1(2);
+
+		System.out.println(spyMockee.test0(1));
+		System.out.println(spyMockee.test1(2));
+```
+
+2. 构造mock的常用扩展参数
+
+```java  
+
+	Mockee mockee = new Mockee("mockee");
+	Mockee mockee = mock(Mockee.class, Mockito.RETURNS_SMART_NULLS);
+	Mockee mockee = mock(Mockee.class, Mockito.CALLS_REAL_METHODS);
+	Mockee mockee = mock(Mockee.class, Mockito.RETURNS_DEEP_STUBS);
+```
+
+```java  
+
+	Foo mock = mock(Foo.class, RETURNS_DEEP_STUBS);
+	when(mock.getBar().getName(), "deep");
+
+	// 等价于
+	Foo foo = mock(Foo.class);
+	Bar bar = mock(Bar.class);
+	when(foo.getBar()).thenReturn(bar);
+	when(bar.getName()).thenReturn("deep");
+
+```
+3. 原理
+
+```java  
+
+public class Mockito {
+
+	public static Map<Invocation, Object> results = new HashMap<Invocation, Object>();
+	public static Invocation lastInvocation;
+	
+	public static Mockee mock(Class<Mockee> clazz) {
+		return new MockeeEx();
+	}
+
+	public static <T> When<T> when(T o) {
+		return new When<T>();
+	}
+
+	public static class When<T> {
+		public void thenReturn(T retObj) {
+			results.put(lastInvocation, retObj);
+		}
+	}
+
+	public static void main(String[] args) {
+		Mockee mockee = mock(Mockee.class);
+		when(mockee.test0(1)).thenReturn("a");
+
+		System.out.println(mockee.test0(1));
+	}
+}
+
+class Invocation {
+	private final Object mock;
+	private final String method;
+	private final Object[] arguments;
+
+	public Invocation(Object mock, String method, Object[] arguments) {
+		this.mock = mock;
+		this.method = method;
+		this.arguments = arguments;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Invocation that = (Invocation) o;
+		return Objects.equals(mock, that.mock) &&
+				Objects.equals(method, that.method) &&
+				Arrays.equals(arguments, that.arguments);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = Objects.hash(mock, method);
+		result = 31 * result + Arrays.hashCode(arguments);
+		return result;
+	}
+}
+
+class MockeeEx extends Mockee {
+
+	public MockeeEx() {
+		super(null);
+	}
+
+	public String test0(int a) {
+		Invocation invocation = new Invocation(this, "test0", new Object[] {a});
+		Mockito.lastInvocation = invocation;
+		if (Mockito.results.containsKey(invocation)) {
+			return (String)Mockito.results.get(invocation);
+		}
+		return null;
+	}
+
+	public String test1(int a) {
+		Invocation invocation = new Invocation(this, "test1", new Object[] {a});
+		Mockito.lastInvocation = invocation;
+		if (Mockito.results.containsKey(invocation)) {
+			return (String)Mockito.results.get(invocation);
+		}
+		return null;
+	}
+}
+
+class Mockee {
+
+	private final String b;
+	public Mockee(String b) {
+		this.b = b;
+	}
+
+	public String test0(int a) {
+		return String.valueOf(a);
+	}
+
+	public String test1(int a) {
+		Objects.requireNonNull(b);
+		return a + b;
+	}
+}
+
+```
+
+### 文档
+
+* [Mockito doc](https://javadoc.io/static/org.mockito/mockito-core/3.2.4/org/mockito/Mockito.html)
