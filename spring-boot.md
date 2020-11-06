@@ -274,6 +274,20 @@ public class Main {
 
 # spring boot 条件注解
 
+```
+@ConditionalOnBean
+@ConditionalOnClass
+@ConditionalOnExpression
+@ConditionalOnJava
+@ConditionalOnMissingBean
+@ConditionalOnMissingClass
+@ConditionalOnNotWebApplication
+@ConditionalOnProperty
+@ConditionalOnResource
+@ConditionalOnWebApplication
+@ConditionalOnSingleCandidate
+```
+
 # References
 
 * [spring boot reference](https://docs.spring.io/spring-boot/docs/current/reference/html/)
