@@ -1,7 +1,7 @@
 # spring boot 简介
 SpringBoot是由Pivotal团队在2013年开始研发, 2014年4月发布第一个版本的全新开源的轻量级框架。它基于Spring4.0设计，不仅继承了Spring框架原有的优秀特性，而且还通过简化配置来进一步简化了Spring应用的整个搭建和开发过程。另外SpringBoot通过集成大量的框架使得依赖包的版本冲突，以及引用的不稳定性等问题得到了很好的解决。
 
-# 依赖
+## 依赖
 
 ```
 Java 8+
@@ -17,7 +17,7 @@ Maven 3.3+
 | Jetty 9.4 | 3.1 |
 | Undertow 2.0 | 4.0 |
 
-# 简单使用
+## 简单使用
 
 1. 创建maven工程
 
@@ -110,7 +110,7 @@ public class TestController {
 {"response":"hello world"}
 ```
 
-# 自动配置
+## 自动配置
 
 1. @SpringBootApplication注解
 
@@ -163,7 +163,7 @@ java -cp $CLASSPATH Main --debug
 @SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
 ```
 
-# 优雅关闭
+## 优雅关闭
 
 ```
 public class Main {
@@ -181,7 +181,7 @@ public class Main {
 }
 ```
 
-# application.properties
+## application.properties
 
 1. 常用配置
 
@@ -209,7 +209,7 @@ application-$profile.properties
 $name.properties
 ```
 
-# 类型安全的Configuration properties
+## 类型安全的Configuration properties
 
 ```
 @ConfigurationProperties("spring.my")
@@ -246,7 +246,7 @@ spring.my.remote-address=127.0.0.1
 spring.my.enabled=true
 ```
 
-# 非web的spring项目改造成spring-boot
+## 非web的spring项目改造成spring-boot
 
 ```
 @SpringBootConfiguration
@@ -259,7 +259,7 @@ public class Main {
 }
 ```
 
-# 既有的spring mvc项目升级到spring-boot
+## 既有的spring mvc项目升级到spring-boot
 
 ```
 @SpringBootConfiguration
@@ -272,7 +272,7 @@ public class Main {
 }
 ```
 
-# spring boot 条件注解
+## spring boot 条件注解
 
 ```
 @ConditionalOnBean
@@ -287,6 +287,8 @@ public class Main {
 @ConditionalOnWebApplication
 @ConditionalOnSingleCandidate
 ```
+
+## Noldor项目升级过程
 
 # References
 
