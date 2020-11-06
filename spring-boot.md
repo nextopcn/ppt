@@ -246,6 +246,29 @@ spring.my.remote-address=127.0.0.1
 spring.my.enabled=true
 ```
 
+## spring boot 条件注解
+
+```
+@ConditionalOnBean
+@ConditionalOnClass
+@ConditionalOnExpression
+@ConditionalOnJava
+@ConditionalOnMissingBean
+@ConditionalOnMissingClass
+@ConditionalOnNotWebApplication
+@ConditionalOnProperty
+@ConditionalOnResource
+@ConditionalOnWebApplication
+@ConditionalOnSingleCandidate
+```
+
+## 自建starter的几个要素
+```
+1. @Configuration 与条件注释 @Conditional**
+2. 自动配置 /META-INF/spring.factories
+3. 类型安全的configuration properties
+```
+
 ## 非web的spring项目改造成spring-boot
 
 ```
@@ -272,26 +295,11 @@ public class Main {
 }
 ```
 
-## spring boot 条件注解
-
-```
-@ConditionalOnBean
-@ConditionalOnClass
-@ConditionalOnExpression
-@ConditionalOnJava
-@ConditionalOnMissingBean
-@ConditionalOnMissingClass
-@ConditionalOnNotWebApplication
-@ConditionalOnProperty
-@ConditionalOnResource
-@ConditionalOnWebApplication
-@ConditionalOnSingleCandidate
-```
-
 ## Noldor项目升级过程
 
 # References
 
+* [SpringBoot 揭秘 快速构建微服务体系](https://book.douban.com/subject/26808298/)
 * [spring boot reference](https://docs.spring.io/spring-boot/docs/current/reference/html/)
 * [configure jetty server](https://howtodoinjava.com/spring-boot/configure-jetty-server/)
 * [spring app migration from xml to java based config](https://www.robinhowlett.com/blog/2013/02/13/spring-app-migration-from-xml-to-java-based-config/)
