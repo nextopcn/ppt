@@ -7,6 +7,9 @@
 * @Value
 * @Scope
 
+### 10. conditional
+* @Conditional
+
 ### 2. profile
 * @Profile
 
@@ -49,9 +52,6 @@
 * @Inject
 * @Named
 * @ManagedBean
-
-### 10. conditional
-* @Conditional
 
 # References
 * [spring reference](https://docs.spring.io/spring-framework/docs/5.0.0.M3/spring-framework-reference/htmlsingle/#beans-resource-annotation)
