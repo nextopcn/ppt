@@ -47,11 +47,11 @@
 * @Resource
 * @PreDestory
 * @PostConstruct
+* @ManagedBean
 
 ### 9. jsr330
 * @Inject
 * @Named
-* @ManagedBean
 
 # References
 * [spring reference](https://docs.spring.io/spring-framework/docs/5.0.0.M3/spring-framework-reference/htmlsingle/#beans-resource-annotation)
