@@ -1,6 +1,6 @@
 Java Object Layout
 
-1. Java内存布局介绍
+## Java内存布局介绍  
    
    Java的实例对象、数组对象在内存中的组成包括如下三部分：对象头Hearder、实例数据、内存填充。示意图如下所示
 ![img.png](img.png)
@@ -8,7 +8,7 @@ Java Object Layout
 对象头：其主要包括两部分数据：Mark Word、Class对象指针。特别地对于数组对象而言，其还包括了数组长度数据。在64位的HotSpot虚拟机下，Mark Word占8个字节，其记录了Hash Code、GC信息、锁信息等相关信息；而Class对象指针则指向该实例的Class对象，在开启指针压缩的情况下占用4个字节，否则占8个字节；如果其是一个数组对象，则还需要4个字节用于记录数组长度信息。这里列出64位HotSpot虚拟机Mark Word的具体含义，以供参考。需要注意的是在下图的Mark Word中，左侧为高字节，右侧为低字节
 ![img_1.png](img_1.png)
 
-2. 使用工具查看Java内存布局
+## 使用工具查看Java内存布局
 
 依赖
 ```java  
@@ -19,9 +19,10 @@ Java Object Layout
 </dependency>
 ```
 
-3. 简单使用
+## 简单使用
 
-```aidl  
+```java  
+
 -Djdk.attach.allowAttachSelf
 ```
 
@@ -46,9 +47,9 @@ Instance size: 24 bytes
 Space losses: 4 bytes internal + 0 bytes external = 4 bytes total
 ```
 
-4. 压缩指针与object alignment
+## 压缩指针与object alignment
 
-5. false sharing与缓存行填充
+## false sharing与缓存行填充
 
 ![img_2.png](img_2.png)
 
@@ -98,11 +99,11 @@ public long value;
 }
 ```
 
-```aidl  
+```java  
 -XX:-RestrictContended -XX:ContendedPaddingWidth=64 --add-opens=java.base/jdk.internal.vm.annotation=ALL-UNNAMED
 ```
 
-```aidl  
+```java  
 cn.nextop.gadget.Value object internals:
 OFF  SZ   TYPE DESCRIPTION               VALUE
   0   8        (object header: mark)     0x000000000000000d (biasable; age: 1)
@@ -115,7 +116,7 @@ Space losses: 68 bytes internal + 0 bytes external = 68 bytes total
 ```
 
 
-6. 基础类型的包装对象占用的内存空间
+## 基础类型的包装对象占用的内存空间
 
-7. 示例
+## 示例
 
