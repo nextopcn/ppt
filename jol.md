@@ -1,4 +1,4 @@
-Java Object Layout
+# Java Object Layout
 
 ## Java内存布局介绍  
    
@@ -53,9 +53,9 @@ Space losses: 4 bytes internal + 0 bytes external = 4 bytes total
 
 ![img_2.png](img_2.png)
 
-* [disruptor](https://github.com/LMAX-Exchange/disruptor)
+1. [disruptor](https://github.com/LMAX-Exchange/disruptor)
 
-* 手动填充
+2. 手动填充
 ```java  
 
 class LhsPadding
@@ -89,7 +89,7 @@ class RhsPadding extends Value
 
 ```
 
-* 使用Contended注解
+3. 使用Contended注解
 
 ```java  
 
