@@ -22,18 +22,17 @@
 ## 简单使用
 
 ```java  
-
 -Djdk.attach.allowAttachSelf
 ```
 
 ```java  
-	public static void main(String[] args) {
-		System.out.println(ClassLayout.parseInstance(new Node()).toPrintable());
-	}
-	
-	static class Node {
-		public long value;
-	}
+public static void main(String[] args) {
+    System.out.println(ClassLayout.parseInstance(new Node()).toPrintable());
+}
+
+public static class Node {
+    public long value;
+}
 ```
 
 ```java  
@@ -47,8 +46,6 @@ Instance size: 24 bytes
 Space losses: 4 bytes internal + 0 bytes external = 4 bytes total
 ```
 
-## 压缩指针与object alignment
-
 ## false sharing与缓存行填充
 
 ![img_2.png](img_2.png)
@@ -58,7 +55,7 @@ Space losses: 4 bytes internal + 0 bytes external = 4 bytes total
 2. 手动填充
 ```java  
 
-class LhsPadding
+public class LhsPadding
 {
     protected byte
         p10, p11, p12, p13, p14, p15, p16, p17,
@@ -70,12 +67,12 @@ class LhsPadding
         p70, p71, p72, p73, p74, p75, p76, p77;
 }
 
-class Value extends LhsPadding
+public class Value extends LhsPadding
 {
     protected long value;
 }
 
-class RhsPadding extends Value
+public class RhsPadding extends Value
 {
     protected byte
         p90, p91, p92, p93, p94, p95, p96, p97,
@@ -92,8 +89,7 @@ class RhsPadding extends Value
 3. 使用Contended注解
 
 ```java  
-
-class Value {
+public class Value {
 @jdk.internal.vm.annotation.Contended
 public long value;
 }
@@ -117,6 +113,51 @@ Space losses: 68 bytes internal + 0 bytes external = 68 bytes total
 
 
 ## 基础类型的包装对象占用的内存空间
+
+```java  
+java.lang.Byte object internals:
+OFF  SZ   TYPE DESCRIPTION               VALUE
+  0   8        (object header: mark)     0x0000000000000005 (biasable; age: 0)
+  8   4        (object header: class)    0x00013548
+ 12   1   byte Byte.value                5
+ 13   3        (object alignment gap)    
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 3 bytes external = 3 bytes total
+```
+
+```java  
+java.lang.Long object internals:
+OFF  SZ   TYPE DESCRIPTION               VALUE
+  0   8        (object header: mark)     0x000000000000000d (biasable; age: 1)
+  8   4        (object header: class)    0x00013c38
+ 12   4        (alignment/padding gap)   
+ 16   8   long Long.value                5
+Instance size: 24 bytes
+Space losses: 4 bytes internal + 0 bytes external = 4 bytes total
+```
+
+避免boxing, unboxing
+
+```java  
+LongHashMap
+LongFunction
+...
+```
+
+## 压缩指针与object alignment
+
+```java  
+-XX:+UseCompressedOops
+-XX:ObjectAlignmentInBytes=8
+```
+
+![img_3.png](img_3.png)
+
+```
+32位4字节地址可以根据地址后三位为0，那么进行位移操作后可以保存35位地址；即2^35=32g堆空间以内可以使用压缩指针
+
+当-XX:ObjectAlignmentInBytes=16时，那么地址后4位为0， 可以在2^36=64g堆空间内使用压缩指针
+```
 
 ## 示例
 
