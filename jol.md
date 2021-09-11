@@ -1,8 +1,8 @@
 # Java Object Layout
 
 ## Java内存布局介绍  
-   
-   Java的实例对象、数组对象在内存中的组成包括如下三部分：对象头Hearder、实例数据、内存填充。示意图如下所示
+
+Java的实例对象、数组对象在内存中的组成包括如下三部分：对象头Hearder、实例数据、内存填充。示意图如下所示
 ![img.png](img.png)
 
 对象头：其主要包括两部分数据：Mark Word、Class对象指针。特别地对于数组对象而言，其还包括了数组长度数据。在64位的HotSpot虚拟机下，Mark Word占8个字节，其记录了Hash Code、GC信息、锁信息等相关信息；而Class对象指针则指向该实例的Class对象，在开启指针压缩的情况下占用4个字节，否则占8个字节；如果其是一个数组对象，则还需要4个字节用于记录数组长度信息。这里列出64位HotSpot虚拟机Mark Word的具体含义，以供参考。需要注意的是在下图的Mark Word中，左侧为高字节，右侧为低字节
@@ -28,6 +28,7 @@
 ```java  
 public static void main(String[] args) {
     System.out.println(ClassLayout.parseInstance(new Node()).toPrintable());
+    System.out.println(ClassLayout.parseInstance(new int[]{1,2,3,4,5}).toPrintable());
 }
 
 public static class Node {
@@ -44,6 +45,17 @@ OFF  SZ   TYPE DESCRIPTION               VALUE
  16   8   long Node2.value               0
 Instance size: 24 bytes
 Space losses: 4 bytes internal + 0 bytes external = 4 bytes total
+
+[I object internals:
+OFF  SZ   TYPE DESCRIPTION               VALUE
+  0   8        (object header: mark)     0x0000000000000001 (non-biasable; age: 0)
+  8   4        (object header: class)    0x00000c10
+ 12   4        (array length)            5
+ 12   4        (alignment/padding gap)   
+ 16  20    int [I.<elements>             N/A
+ 36   4        (object alignment gap)    
+Instance size: 40 bytes
+Space losses: 4 bytes internal + 4 bytes external = 8 bytes total
 ```
 
 ## false sharing与缓存行填充
