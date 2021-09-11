@@ -96,7 +96,9 @@ public long value;
 ```
 
 ```java  
--XX:-RestrictContended -XX:ContendedPaddingWidth=64 --add-opens=java.base/jdk.internal.vm.annotation=ALL-UNNAMED
+-XX:-RestrictContended 
+-XX:ContendedPaddingWidth=64 
+--add-opens=java.base/jdk.internal.vm.annotation=ALL-UNNAMED
 ```
 
 ```java  
@@ -154,10 +156,32 @@ LongFunction
 ![img_3.png](img_3.png)
 
 ```
-32位4字节地址可以根据地址后三位为0，那么进行位移操作后可以保存35位地址；即2^35=32g堆空间以内可以使用压缩指针
+32位4字节地址可以根据地址后三位为0，那么进行位移操作后可以保存35位地址；
+即2^35=32g堆空间以内可以使用压缩指针
 
-当-XX:ObjectAlignmentInBytes=16时，那么地址后4位为0， 可以在2^36=64g堆空间内使用压缩指针
+当-XX:ObjectAlignmentInBytes=16时，那么地址后4位为0;
+即可以在2^36=64g堆空间内使用压缩指针
 ```
 
 ## 示例
 
+```java  
+protected static final class Node { 
+    protected final int length; protected long address;
+    protected Node ( final long a, final int n ) { 
+        this.address = a; this.length = n; 
+    }
+}
+```
+
+```java  
+cn.nextop.gadget.XDirectMap$Node object internals:
+OFF  SZ   TYPE DESCRIPTION               VALUE
+  0   8        (object header: mark)     0x0000000000000005 (biasable; age: 0)
+  8   4        (object header: class)    0x00067248
+ 12   4    int Node.length               0
+ 16   8   long Node.address              0
+Instance size: 24 bytes
+Space losses: 0 bytes internal + 0 bytes external = 0 bytes total
+
+```
