@@ -125,6 +125,14 @@ Instance size: 152 bytes
 Space losses: 68 bytes internal + 0 bytes external = 68 bytes total
 ```
 
+| type                   | length   |
+|------------------------|----------|
+| mark word              | 12 bytes |
+| class pointer          | 4  bytes |
+| cache line alignment   | 64 bytes |
+| Node2.value            | 8  bytes |
+| cache line alignment   | 64 bytes |
+| object alignment       | 4  bytes |
 
 ## 基础类型的包装对象占用的内存空间
 
