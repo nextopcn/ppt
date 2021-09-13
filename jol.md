@@ -205,3 +205,10 @@ Instance size: 24 bytes
 Space losses: 0 bytes internal + 0 bytes external = 0 bytes total
 
 ```
+
+## References
+
+* [Dissecting the Disruptor: Why it’s so fast (part two) – Magic cache line padding](https://trishagee.com/2011/07/22/dissecting_the_disruptor_why_its_so_fast_part_two__magic_cache_line_padding/)
+* [Disruptor Sequence Source code](https://github.com/LMAX-Exchange/disruptor/blob/master/src/main/java/com/lmax/disruptor/Sequence.java)
+* [Java memory layout](https://www.baeldung.com/java-memory-layout)
+* [Compressed OOPs in the JVM](https://www.baeldung.com/jvm-compressed-oops)
