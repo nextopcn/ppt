@@ -183,6 +183,45 @@ LongFunction
 即可以在2^36=64g堆空间内使用压缩指针
 ```
 
+开启与关闭指针压缩的空间对比
+```java  
+public static void main(String[] args) {
+    System.out.println(ClassLayout.parseInstance(new Node()).toPrintable());
+}
+
+static class Node {
+    Node n1;
+    Node n2;
+}
+```
+
+开启(-XX:+UseCompressedOops)
+```
+cn.nextop.gadget.Main$Node object internals:
+OFF  SZ                         TYPE DESCRIPTION               VALUE
+  0   8                              (object header: mark)     0x000000000000000d (biasable; age: 1)
+  8   4                              (object header: class)    0x00067248
+ 12   4   cn.nextop.gadget.Main.Node Node.n1                   null
+ 16   4   cn.nextop.gadget.Main.Node Node.n2                   null
+ 20   4                              (object alignment gap)    
+Instance size: 24 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+```
+
+关闭(-XX:-UseCompressedOops)
+```
+cn.nextop.gadget.Main$Node object internals:
+OFF  SZ                         TYPE DESCRIPTION               VALUE
+  0   8                              (object header: mark)     0x000000000000000d (biasable; age: 1)
+  8   8                              (object header: class)    0x000001fd34fa5c10
+ 16   8   cn.nextop.gadget.Main.Node Node.n1                   null
+ 24   8   cn.nextop.gadget.Main.Node Node.n2                   null
+Instance size: 32 bytes
+Space losses: 0 bytes internal + 0 bytes external = 0 bytes total
+```
+
+开启之后节省了8字节空间
+
 ## 示例
 
 ```java  
