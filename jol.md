@@ -166,6 +166,38 @@ LongFunction
 ...
 ```
 
+## 字段重排序
+
+```java  
+static class Node {
+    byte b1;
+    long l1;
+    byte b2;
+    byte b3;
+    byte b4;
+    byte b5;
+    byte b6;
+    byte b7;
+}
+```
+
+重排后
+```
+cn.nextop.gadget.Main$Node object internals:
+OFF  SZ   TYPE DESCRIPTION               VALUE
+  0   8        (object header: mark)     0x000000000000000d (biasable; age: 1)
+  8   4        (object header: class)    0x00067248
+ 12   1   byte Node.b1                   0
+ 13   1   byte Node.b2                   0
+ 14   1   byte Node.b3                   0
+ 15   1   byte Node.b4                   0
+ 16   8   long Node.l1                   0
+ 24   1   byte Node.b5                   0
+ 25   1   byte Node.b6                   0
+ 26   1   byte Node.b7                   0
+ 27   5        (object alignment gap)    
+```
+
 ## 压缩指针与object alignment
 
 ```java  
