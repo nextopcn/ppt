@@ -6,6 +6,7 @@
 4. 迭代
 5. 线程安全
 6. 堆外内存管理
+7. mapdb的hash操作
 
 ## 1. 结构
 
@@ -212,4 +213,24 @@ get(key) {
     return nil
     finally locks[slot].readlock.unlock
 }
+```
+
+## 7. mapdb的hash操作
+
+```
+init level = 4
+int hash = hash(key.hashcode)
+int index(hash, level) {
+    return (hash >>> ((level - 1) * 7)) & 127;
+}
+```
+
+```
+example:
+int hash = 0110||1001110||1010010||1101001||0010011
+int slot = 0110 & 15
+if level = 4 then index = 1001110 & 127
+if level = 3 then index = 1010010 & 127
+if level = 2 then index = 1101001 & 127
+if level = 1 then index = 0010011 & 127
 ```
