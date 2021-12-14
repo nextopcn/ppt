@@ -150,6 +150,8 @@ put(key, value) {
 
 ```
 
+![thread-safe.png](offheapmap/thread-safe.png)
+
 ## 6. 堆外内存管理
 
 #### 6.1 Path 压缩
