@@ -1,0 +1,30 @@
+digraph {
+    node [shape=Mrecord];
+    roots [label="<f0> node(Key1)|<f1> 0|<f2> ...|<f3> path(Path)" color = blue];
+    node1 [label="<f0> key1|<f1> value1"];
+    node2 [label="<f0> key2|<f1> value2"];
+    node3 [label="<f0> key3|<f1> value3"];
+    pathA [label="<f0> 0|<f1> node(Key4)|<f2> path(Path)|<f3> ...|<f4> 0" color = green];
+    pathB [label="<f0> node(Key7)|<f1> 0|<f2> node(Key8)|<f3> ...|<f4> 0" color = green];
+
+    node4 [label="<f0> key4|<f1> value4"];
+    node5 [label="<f0> key5|<f1> value5"];
+    node6 [label="<f0> key6|<f1> value6"];
+    node7 [label="<f0> key7|<f1> value7"];
+    node8 [label="<f0> key8|<f1> value8"];
+    node9 [label="<f0> key9|<f1> value9"];
+    roots:f0 -> node1:f0;
+    node1:f0 -> node2:f0;
+    node2:f0 -> node3:f0;
+    pathA:f1 -> node4:f0;
+    node4:f0 -> node5:f0;
+    roots:f3 -> pathA:f0;
+    pathA:f2 -> pathB:f0;
+    node5:f0 -> node6:f0;
+    node3:f0 -> node9:f0;
+    pathB:f0 -> node7:f0;
+    pathB:f2 -> node8:f0;
+
+    node10 [label="<f0> key10|<f1> value10" color = red];
+    node6:f0 -> node10:f0;
+}
