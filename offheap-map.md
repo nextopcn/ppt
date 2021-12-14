@@ -188,7 +188,7 @@ if (newlen <= oldlen / 2 || newlen > oldlen) {
 }
 ```
 
-#### 6.3 序列化与Value Lazy get
+#### 6.3 反序列化与Value Lazy get
 ```
 get(key) {
     hash = hash(key.hashcode)
