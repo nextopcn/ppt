@@ -150,3 +150,63 @@ put(key, value) {
 ```
 
 ## 6. 堆外内存管理
+
+#### 6.1 Path 压缩
+
+```
+int length = 128 * 8
+long addr = malloc(length)
+
+(1)
+long[] header = new long[2]
+int length = count(header);
+long[] values = new long[length]
+
+long addr = malloc(2*8 + values.length*8);
+put(addr, header)
+put(addr, values)
+
+(2)
+long[] header = new long[2]
+int length = count(header);
+length = Math.max(po2(length), 16);
+long[] values = new long[length]
+
+long addr = malloc(2*8 + values.length*8);
+put(addr, header)
+put(addr, values)
+```
+
+#### 6.2 Path, Node内存分配策略
+
+```
+if (newlen <= oldlen / 2 || newlen > oldlen) {
+    addr = allocator.realloc(addr, newlen);
+}
+```
+
+#### 6.3 序列化与Value Lazy get
+```
+get(key) {
+    hash = hash(key.hashcode)
+    slot = hash & mask
+    locks[slot].readlock.lock
+    level = 4
+    next = storage.get(root[slot])
+    while(next != nil) {
+        if (next is path) {
+            index = index(hash, level)
+            next = storage.get(path[index])
+            level = level - 1
+        } else if (next is node) {
+            if (next.key equals key) {
+                // unmarshall value when match the key.
+                return next.value
+            }
+            next = storage.get(next.next)
+        }
+    }
+    return nil
+    finally locks[slot].readlock.unlock
+}
+```
