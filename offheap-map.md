@@ -118,9 +118,10 @@ insert key10
 ```
 1th iterate [key3, key9, key2, key1]
 insert key10
-2th iterate [key4, key5, key6]
-3th iterate [key7]
-4th iterate [key8]
+2th iterate [key10]
+3th iterate [key4, key5, key6]
+4th iterate [key7]
+5th iterate [key8]
 ```
 
 ## 5. 线程安全
