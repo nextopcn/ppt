@@ -109,9 +109,12 @@ if level = 1 then index = 10010011 & 127
 ```
 1th iterate [key1, key2, key3, key9]
 insert key10
-2th iterate [key4, key5, key6]
-3th iterate [key7]
-4th iterate [key8]
+2th iterate [key2]  X
+3th iterate [key1]  X
+4th iterate [key10]
+5th iterate [key4, key5, key6]
+6th iterate [key7]
+7th iterate [key8]
 ```
 
 ![iterator1.png](offheapmap/iterator1.png)
