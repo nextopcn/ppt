@@ -3,10 +3,11 @@
 1. 结构
 2. 插入
 3. 删除
-4. 迭代
-5. 线程安全
-6. 堆外内存管理
-7. mapdb的hash操作
+4. 查找
+5. 迭代
+6. 线程安全
+7. 堆外内存管理
+8. mapdb的hash操作
 
 ## 1. 结构
 
@@ -91,9 +92,38 @@ if level = 1 then index = 10010011 & 127
 
 ![delete2.png](offheapmap/delete2.png)
 
-## 4. 迭代
+## 4. 查找
 
-#### 3.1 迭代Map
+#### 4.1 查找key5
+
+![search.png](offheapmap/search.png)
+
+#### 4.2 查找伪代码
+```
+get(key) {
+    hash = hash(key.hashcode)
+    slot = hash & mask
+    level = 4
+    next = storage.get(root[slot])
+    while(next != nil) {
+        if (next is path) {
+            index = index(hash, level)
+            next = storage.get(path[index])
+            level = level - 1
+        } else if (next is node) {
+            if (next.key equals key) {
+                return next.value
+            }
+            next = storage.get(next.next)
+        }
+    }
+    return nil
+}
+```
+
+## 5. 迭代
+
+#### 5.1 迭代Map
 
 ![iterator0.png](offheapmap/iterator0.png)
 
@@ -104,7 +134,7 @@ if level = 1 then index = 10010011 & 127
 4th iterate [key8]
 ```
 
-#### 3.2 迭代Map时发生了层扩容
+#### 5.2 迭代Map时发生了层扩容
 
 ```
 1th iterate [key1, key2, key3, key9]
@@ -128,7 +158,9 @@ insert key10
 5th iterate [key8]
 ```
 
-## 5. 线程安全
+## 6. 线程安全
+
+![thread-safe.png](offheapmap/thread-safe.png)
 
 ```java  
 DirectMap<Integer, Integer> map = new DirectMap<>(32);
@@ -138,7 +170,7 @@ get(key) {
     lock[slot].readlock.lock
     // find that key's value in the search tree
     value = lookup(key)
-    lock[slot].readlock.unlock
+    finally lock[slot].readlock.unlock
     return value
 }
 
@@ -148,17 +180,17 @@ put(key, value) {
     lock[slot].writelock.lock
     // insert key and value to the search tree
     oldvalue = insert(key, value)
-    lock[slot].writelock.unlock
+    finally lock[slot].writelock.unlock
     return oldvalue
 }
 
 ```
 
-![thread-safe.png](offheapmap/thread-safe.png)
 
-## 6. 堆外内存管理
 
-#### 6.1 Path 压缩
+## 7. 堆外内存管理
+
+#### 7.1 Path 压缩
 
 ```
 int length = 128 * 8
@@ -184,7 +216,7 @@ put(addr, header)
 put(addr, values)
 ```
 
-#### 6.2 Path, Node内存分配策略
+#### 7.2 Path, Node内存分配策略
 
 ```
 if (newlen <= oldlen / 2 || newlen > oldlen) {
@@ -192,7 +224,8 @@ if (newlen <= oldlen / 2 || newlen > oldlen) {
 }
 ```
 
-#### 6.3 反序列化与Value Lazy get
+#### 7.3 反序列化与Value Lazy get
+
 ```
 get(key) {
     hash = hash(key.hashcode)
@@ -218,7 +251,7 @@ get(key) {
 }
 ```
 
-## 7. mapdb的hash操作
+## 8. mapdb的hash操作
 
 ```
 init level = 4
