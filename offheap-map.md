@@ -8,6 +8,7 @@
 6. 线程安全
 7. 堆外内存管理
 8. mapdb的hash操作
+9. 性能基准测试
 
 ## 1. 结构
 
@@ -26,7 +27,7 @@ long node(addr) {
 
 #### 1.2 path 函数
 ```
-int length = 128 * 8
+int length = 1288
 long addr = malloc(length)
 
 long path(addr) {
@@ -50,7 +51,7 @@ int slot(hash) {
 init level = 4
 int hash = hash(key.hashcode)
 int index(hash, level) {
-    return (hash >>> ((level - 1) * 8)) & 127;
+    return (hash >>> ((level - 1)8)) & 127;
 }
 ```
 
@@ -193,7 +194,7 @@ put(key, value) {
 #### 7.1 Path 压缩
 
 ```
-int length = 128 * 8
+int length = 1288
 long addr = malloc(length)
 
 (1)
@@ -257,7 +258,7 @@ get(key) {
 init level = 4
 int hash = hash(key.hashcode)
 int index(hash, level) {
-    return (hash >>> ((level - 1) * 7)) & 127;
+    return (hash >>> ((level - 1)7)) & 127;
 }
 ```
 
@@ -269,4 +270,21 @@ if level = 4 then index = 1001110 & 127
 if level = 3 then index = 1010010 & 127
 if level = 2 then index = 1101001 & 127
 if level = 1 then index = 0010011 & 127
+```
+
+## 9. 性能基准测试
+
+```
+Benchmark                              Mode  Cnt         Score        Error  Units
+XDirectMapBenchmark.benchDirectGet    thrpt    5   3314123.305 ± 123395.048  ops/s
+XDirectMapBenchmark.benchMapdbGet     thrpt    5    684125.877 ± 104299.890  ops/s
+XDirectMapBenchmark.benchJemallocGet  thrpt    5  11175422.222 ± 537431.905  ops/s
+XDirectMapBenchmark.benchOakGet       thrpt    5    180117.220 ±  52702.784  ops/s
+XDirectMapBenchmark.benchOakZcGet     thrpt    5    216160.772 ±  88158.235  ops/s
+
+XDirectMapBenchmark.benchDirectPut    thrpt    5    528279.275 ±  12701.195  ops/s
+XDirectMapBenchmark.benchMapdbPut     thrpt    5    275432.266 ± 127542.606  ops/s
+XDirectMapBenchmark.benchJemallocPut  thrpt    5    962102.121 ±  14491.815  ops/s
+XDirectMapBenchmark.benchOakPut       thrpt    5    469686.177 ± 122307.884  ops/s
+XDirectMapBenchmark.benchOakZcPut     thrpt    5    633389.915 ±  36848.268  ops/s
 ```
