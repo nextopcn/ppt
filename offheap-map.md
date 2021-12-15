@@ -275,16 +275,16 @@ if level = 1 then index = 0010011 & 127
 ## 9. 性能基准测试
 
 ```
-Benchmark                              Mode  Cnt         Score        Error  Units
-XDirectMapBenchmark.benchDirectGet    thrpt    5   3314123.305 ± 123395.048  ops/s
-XDirectMapBenchmark.benchMapdbGet     thrpt    5    684125.877 ± 104299.890  ops/s
-XDirectMapBenchmark.benchJemallocGet  thrpt    5  11175422.222 ± 537431.905  ops/s
-XDirectMapBenchmark.benchOakGet       thrpt    5    180117.220 ±  52702.784  ops/s
-XDirectMapBenchmark.benchOakZcGet     thrpt    5    216160.772 ±  88158.235  ops/s
+Benchmark          Mode  Cnt         Score        Error  Units
+benchDirectGet    thrpt    5   3314123.305 ± 123395.048  ops/s
+benchMapdbGet     thrpt    5    684125.877 ± 104299.890  ops/s
+benchJemallocGet  thrpt    5  11175422.222 ± 537431.905  ops/s
+benchOakGet       thrpt    5    180117.220 ±  52702.784  ops/s
+benchOakZcGet     thrpt    5    216160.772 ±  88158.235  ops/s
 
-XDirectMapBenchmark.benchDirectPut    thrpt    5    528279.275 ±  12701.195  ops/s
-XDirectMapBenchmark.benchMapdbPut     thrpt    5    275432.266 ± 127542.606  ops/s
-XDirectMapBenchmark.benchJemallocPut  thrpt    5    962102.121 ±  14491.815  ops/s
-XDirectMapBenchmark.benchOakPut       thrpt    5    469686.177 ± 122307.884  ops/s
-XDirectMapBenchmark.benchOakZcPut     thrpt    5    633389.915 ±  36848.268  ops/s
+benchDirectPut    thrpt    5    528279.275 ±  12701.195  ops/s
+benchMapdbPut     thrpt    5    275432.266 ± 127542.606  ops/s
+benchJemallocPut  thrpt    5    962102.121 ±  14491.815  ops/s
+benchOakPut       thrpt    5    469686.177 ± 122307.884  ops/s
+benchOakZcPut     thrpt    5    633389.915 ±  36848.268  ops/s
 ```
