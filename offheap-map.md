@@ -1,9 +1,9 @@
 # DirectMap
 
 1. 结构
-2. 插入
-3. 删除
-4. 查找
+2. 查找
+3. 插入
+4. 删除
 5. 迭代
 6. 线程安全
 7. 堆外内存管理
@@ -63,42 +63,13 @@ if level = 2 then index = 10110100 & 127
 if level = 1 then index = 10010011 & 127
 ```
 
-## 2. 插入
+## 2. 查找
 
-#### 2.1 插入到某一位置
-![insert0.png](offheapmap/insert0.png)
-
-#### 2.2 插入引发的层扩容
-
-![insert1.png](offheapmap/insert1.png)
-
-![insert2.png](offheapmap/insert2.png)
-
-#### 2.3 层扩容引发的冲突
-
-![insert3.png](offheapmap/insert3.png)
-
-## 3. 删除
-
-#### 3.1 删除某一结点
-
-![delete0.png](offheapmap/delete0.png)
-
-#### 3.2 删除的Path的头节点
-
-![delete1.png](offheapmap/delete1.png)
-
-#### 3.3 删除引发的层缩容
-
-![delete2.png](offheapmap/delete2.png)
-
-## 4. 查找
-
-#### 4.1 查找key5
+#### 2.1 查找key5
 
 ![search.png](offheapmap/search.png)
 
-#### 4.2 查找伪代码
+#### 2.2 查找伪代码
 ```
 get(key) {
     hash = hash(key.hashcode)
@@ -120,6 +91,35 @@ get(key) {
     return nil
 }
 ```
+
+## 3. 插入
+
+#### 3.1 插入到某一位置
+![insert0.png](offheapmap/insert0.png)
+
+#### 3.2 插入引发的层扩容
+
+![insert1.png](offheapmap/insert1.png)
+
+![insert2.png](offheapmap/insert2.png)
+
+#### 3.3 层扩容引发的冲突
+
+![insert3.png](offheapmap/insert3.png)
+
+## 4. 删除
+
+#### 4.1 删除某一结点
+
+![delete0.png](offheapmap/delete0.png)
+
+#### 4.2 删除的Path的头节点
+
+![delete1.png](offheapmap/delete1.png)
+
+#### 4.3 删除引发的层缩容
+
+![delete2.png](offheapmap/delete2.png)
 
 ## 5. 迭代
 
