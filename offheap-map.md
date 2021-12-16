@@ -14,7 +14,17 @@
 
 ![structure.png](offheapmap/structure.png)
 
-#### 1.1 node 函数
+#### 1.1 slot 函数
+```
+# slot 函数决定图中root即蓝色框的index
+init slots = 32
+int hash = hash(key.hashcode)
+int slot(hash) {
+    return hash & 31
+}
+```
+
+#### 1.2 node 函数
 ```
 int length = key.length + value.length
 long addr = malloc(length)
@@ -25,23 +35,13 @@ long node(addr) {
 }
 ```
 
-#### 1.2 path 函数
+#### 1.3 path 函数
 ```
 int length = 128 * 8
 long addr = malloc(length)
 
 long path(addr) {
     return addr << 1 | 1
-}
-```
-
-#### 1.3 slot 函数
-```
-# slot 函数决定图中root即蓝色框的index
-init slots = 32
-int hash = hash(key.hashcode)
-int slot(hash) {
-    return hash & 31
 }
 ```
 
