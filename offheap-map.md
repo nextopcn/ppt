@@ -27,7 +27,7 @@ long node(addr) {
 
 #### 1.2 path 函数
 ```
-int length = 1288
+int length = 128 * 8
 long addr = malloc(length)
 
 long path(addr) {
@@ -194,7 +194,7 @@ put(key, value) {
 #### 7.1 Path 压缩
 
 ```
-int length = 1288
+int length = 128 * 8
 long addr = malloc(length)
 
 (1)
