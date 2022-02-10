@@ -11,7 +11,7 @@ Google Analytics（分析）是一款免费的应用分析解决方案，可提�
 
 ### 服务端设置
 
-
+[firebase console](https://console.firebase.google.com/)
 
 ### 客户端设置
 
@@ -33,20 +33,31 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-logEvent(analytics, 'crash_event', {version : '1.1.0', account_id : '178187273', user_agent : 'chrome', company : '1', route : 'express', env : 'test', });
+logEvent(analytics, 'crash', {version : '1.1.1', account_id : '178187233', user_agent : 'firefox', company : '2', route : 'express', env : 'test', });
 
 ```
 
 ### 通用事件
 
-[sign_up](https://developers.google.com/gtagjs/reference/event#sign_up)
-[login](https://developers.google.com/gtagjs/reference/event#login)
-[exception](https://developers.google.com/gtagjs/reference/event#exception)
-[page_view](https://developers.google.com/gtagjs/reference/event#page_view)
-[screen_view](https://developers.google.com/gtagjs/reference/event#screen_view)
-[search](https://developers.google.com/gtagjs/reference/event#search)
+1. [sign_up](https://developers.google.com/gtagjs/reference/event#sign_up)
+2. [login](https://developers.google.com/gtagjs/reference/event#login)
+3. [exception](https://developers.google.com/gtagjs/reference/event#exception)
+4. [page_view](https://developers.google.com/gtagjs/reference/event#page_view)
+5. [screen_view](https://developers.google.com/gtagjs/reference/event#screen_view)
+6. [search](https://developers.google.com/gtagjs/reference/event#search)
 
-### 自定义事件
+```js
+
+logEvent(analytics, 'sign_up', {   method: 'facebook' });
+logEvent(analytics, 'login', {   method: 'google' });
+logEvent(analytics, 'page_view', { page_location: 'https://example.com/about', page_path: '/about', page_title: 'About' });
+logEvent(analytics, 'screen_view', { screen_name: 'About' });
+logEvent(analytics, 'exception', {   description: 'Missing required field.', fatal: false });
+logEvent(analytics, 'search', { search_term: 'computer'});
+
+```
+
+### 设置维度
 
 ### 限制
 
@@ -66,9 +77,13 @@ logEvent(analytics, 'crash_event', {version : '1.1.0', account_id : '178187273',
 
 ### 集成 BigQuery
 
+[BigQuery](https://console.cloud.google.com/bigquery?project=web-test-9f920)
+
 ```
-select * from `web-test-9f920.analytics_300153741.events_20220206` where event_name = 'crash_event' and event_date = '20220206'
+select * from `web-test-9f920.analytics_300153741.events_20220209` where event_name = 'crash_event'
 ```
+
+[BigQuery 实战宝典](https://support.google.com/analytics/answer/4419694#zippy=%2C%E6%9C%AC%E6%96%87%E5%8C%85%E5%90%AB%E7%9A%84%E4%B8%BB%E9%A2%98)
 
 ### 潜在风险
 
