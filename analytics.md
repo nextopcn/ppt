@@ -59,6 +59,8 @@ logEvent(analytics, 'search', { search_term: 'computer'});
 
 ### 设置维度
 
+[Custom Definitions](https://console.firebase.google.com/project/web-test-9f920/analytics/app/web:NTAwNzk3OTQtMzkwOC00YThhLWJiMjMtMTM4NDcyOGFkNDU0/userproperty/~2F%3Ft%3D1644483590861&fpn%3D659923416702&swu%3D1&sgu%3D1&sus%3Dupgraded&params%3D_u..pageSize%253D25&cs%3Dapp.m.userproperties.overview&g%3D1)
+
 ### 限制
 
 |内容|限制|
@@ -75,6 +77,10 @@ logEvent(analytics, 'search', { search_term: 'computer'});
 
 ### 最佳实践
 
+1. 做好模块封装，随时切到换其他数据分析工具。
+2. 定义crash分析事件的时候，不能把所有堆栈都放到事件里，挑取重要信息。
+3. 注意不要收集用户的隐私，包括搜索关键字，下单价格等。
+
 ### 集成 BigQuery
 
 [BigQuery](https://console.cloud.google.com/bigquery?project=web-test-9f920)
@@ -88,3 +94,8 @@ select * from `web-test-9f920.analytics_300153741.events_20220209` where event_n
 ### 潜在风险
 
 [will-google-analytics-banned-in-europe-in-2022](https://www.eseller365.com/will-google-analytics-banned-in-europe-in-2022/)
+
+### 相似工具
+
+* [datadog](https://www.datadoghq.com/)
+* [appdynamics](https://www.appdynamics.com/)
