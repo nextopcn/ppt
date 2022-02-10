@@ -15,6 +15,10 @@ Google Analytics（分析）是一款免费的应用分析解决方案，可提�
 
 ### 客户端设置
 
+```js  
+npm install firebase
+```
+
 ```js
 
 import { initializeApp } from "firebase/app";
