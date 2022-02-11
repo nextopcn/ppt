@@ -62,6 +62,9 @@ logEvent(analytics, 'search', { search_term: 'computer'});
 // 设置用户属性
 setUserProperties(analytics, { favorite_food: 'banana' });
 
+// Android & IOS
+Analytics.setUserID("123456")
+
 ```
 
 ### 设置维度
@@ -102,7 +105,8 @@ select * from `web-test-9f920.analytics_300153741.events_20220209` where event_n
 
 [will-google-analytics-banned-in-europe-in-2022](https://www.eseller365.com/will-google-analytics-banned-in-europe-in-2022/)
 
-### 相似工具
+### 相似工具及文档
 
 * [datadog](https://www.datadoghq.com/)
 * [appdynamics](https://www.appdynamics.com/)
+* [analytics doc](https://firebase.google.com/docs/analytics)
