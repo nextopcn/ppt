@@ -22,7 +22,7 @@ npm install firebase
 ```js
 
 import { initializeApp } from "firebase/app";
-import { getAnalytics, logEvent } from "firebase/analytics";
+import { getAnalytics, logEvent, setUserProperties } from "firebase/analytics";
 
 const firebaseConfig = {
     apiKey: "********************************",
@@ -58,6 +58,9 @@ logEvent(analytics, 'page_view', { page_location: 'https://example.com/about', p
 logEvent(analytics, 'screen_view', { screen_name: 'About' });
 logEvent(analytics, 'exception', {   description: 'Missing required field.', fatal: false });
 logEvent(analytics, 'search', { search_term: 'computer'});
+
+// 设置用户属性
+setUserProperties(analytics, { favorite_food: 'banana' });
 
 ```
 
