@@ -322,5 +322,4 @@ XDirectMapBenchmark.benchNopLockDirectPut  thrpt    5   1120465.074 ±   92480.8
 
 XDirectMapBenchmark.benchJavallocGet       thrpt    5  10082063.184 ± 1298667.899  ops/s
 XDirectMapBenchmark.benchJavallocPut       thrpt    5   1360898.468 ±   40137.344  ops/s
-
 ```
