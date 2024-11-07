@@ -7,24 +7,22 @@
 5. 迭代
 6. 线程安全
 7. 堆外内存管理
-8. mapdb的hash操作
-9. 性能基准测试
+8. 性能基准测试
 
 ## 1. 结构
 
 ![structure.png](offheapmap/structure.png)
 
-#### 1.1 slot 函数
+#### 1.1 slot
 ```
-# slot 函数决定图中root即蓝色框的index
-init slots = 32
+# slot 决定图中root即蓝色框的index
 int hash = hash(key.hashcode)
 int slot(hash) {
-    return hash & 31
+    return hash >>> 24
 }
 ```
 
-#### 1.2 node 函数
+#### 1.2 node
 ```
 int length = key.length + value.length
 long addr = malloc(length)
@@ -35,9 +33,9 @@ long node(addr) {
 }
 ```
 
-#### 1.3 path 函数
+#### 1.3 path
 ```
-int length = 128 * 8
+int length = 256 * 8
 long addr = malloc(length)
 
 long path(addr) {
@@ -45,23 +43,24 @@ long path(addr) {
 }
 ```
 
-#### 1.4 index 函数
+#### 1.4 index
 ```
-# index 函数决定图中path即绿色框的index
-init level = 4
+# index
+init level = 3
 int hash = hash(key.hashcode)
 int index(hash, level) {
-    return (hash >>> ((level - 1)8)) & 127;
+    return (hash >>> ((level - 1) * 8)) & 0xFF;
 }
 ```
 
 ```
 example:
 int hash = 01101001||11010100||10110100||10010011
-if level = 4 then index = 01101001 & 127
-if level = 3 then index = 11010100 & 127
-if level = 2 then index = 10110100 & 127
-if level = 1 then index = 10010011 & 127
+
+slot = 01101001 & 0xFF
+level3's index = 11010100 & 0xFF
+level2's index = 10110100 & 0xFF
+level1's index = 10010011 & 0xFF
 ```
 
 ## 2. 查找
@@ -72,25 +71,21 @@ if level = 1 then index = 10010011 & 127
 
 #### 2.2 查找伪代码
 ```
-get(key) {
+get(key)
     hash = hash(key.hashcode)
-    slot = hash & mask
-    level = 4
+    slot = slot(hash)
+    level = 3
     next = storage.get(root[slot])
-    while(next != nil) {
-        if (next is path) {
+    while (next != nil)
+        if (next is path)
             index = index(hash, level)
             next = storage.get(path[index])
             level = level - 1
-        } else if (next is node) {
-            if (next.key equals key) {
+        else if (next is node)
+            if (next.key equals key)
                 return next.value
-            }
             next = storage.get(next.next)
-        }
-    }
     return nil
-}
 ```
 
 ## 3. 插入
@@ -108,6 +103,48 @@ get(key) {
 
 ![insert3.png](offheapmap/insert3.png)
 
+#### 3.4 插入伪代码
+
+```
+put(key, val) 
+    hash = hash(key.hashcode)
+    slot = slot(hash)
+    next = storage.get(root[slot])
+    
+    # insert to root
+    if (next is nil) 
+        addr = insert(key, val)
+        root[slot] = node(addr)
+        return
+    
+    # replace exist key's value
+    searchPaths = new List
+    level = 3
+    while (next != nil)
+        searchPaths.add(next)
+        if (next is path)
+            index = index(hash, level)
+            next = storage.get(path[index])
+            level = level - 1
+        else if (next is node)
+            if (next.key equals key)
+                next.value = val
+                return
+            next = storage.get(next.next)
+        
+    # if not found exist key, insert key,val
+    if (level <= 0 or nodes < MAX)
+        insert(searchPaths, key, val)
+        return
+    
+    # relocated nodes to new path
+    path = new Path
+    index = index(hash, level)
+    path[index] = (key, val)
+    relocated(searchPaths, path, level)
+    return
+```
+
 ## 4. 删除
 
 #### 4.1 删除某一结点
@@ -121,6 +158,31 @@ get(key) {
 #### 4.3 删除引发的层缩容
 
 ![delete2.png](offheapmap/delete2.png)
+
+#### 4.4 删除伪代码
+
+```
+remove(key)
+    hash = hash(key.hashcode)
+    slot = slot(hash)
+    next = storage.get(root[slot])
+    
+    searchPaths = new List
+    level = 3
+    while (next != nil)
+        searchPaths.add(next)
+        if (next is path)
+            index = index(hash, level)
+            next = storage.get(path[index])
+            level = level - 1
+        else if (next is node)
+            if (next.key equals key)
+                delete(searchPaths, key)
+                return
+            next = storage.get(next.next)
+    return
+
+```
 
 ## 5. 迭代
 
@@ -164,25 +226,28 @@ insert key10
 ![thread-safe.png](offheapmap/thread-safe.png)
 
 ```java  
-DirectMap<Integer, Integer> map = new DirectMap<>(32);
+DirectMap<Integer, Integer> map = new DirectMap<>();
 get(key) {
     int hash = hash(key.hashcode)
-    int slot = hash & 31;
+    int slot = slot(hash)
     lock[slot].readlock.lock
-    // find that key's value in the search tree
-    value = lookup(key)
-    finally lock[slot].readlock.unlock
-    return value
+    try
+        value = lookup(key)
+        return value;
+    finally 
+        lock[slot].readlock.unlock
+    
 }
 
 put(key, value) {
     int hash = hash(key.hashcode)
-    int slot = hash & 31;
+    int slot = slot(hash)
     lock[slot].writelock.lock
-    // insert key and value to the search tree
-    oldvalue = insert(key, value)
-    finally lock[slot].writelock.unlock
-    return oldvalue
+    try
+        oldvalue = insert(key, value)
+        return oldvalue
+    finally 
+        lock[slot].writelock.unlock
 }
 
 ```
@@ -228,63 +293,42 @@ if (newlen <= oldlen / 2 || newlen > oldlen) {
 #### 7.3 反序列化与Value Lazy get
 
 ```
-get(key) {
+get(key)
     hash = hash(key.hashcode)
-    slot = hash & mask
-    locks[slot].readlock.lock
+    slot = slot(hash)
     level = 4
     next = storage.get(root[slot])
-    while(next != nil) {
-        if (next is path) {
+    while(next != nil)
+        if (next is path)
             index = index(hash, level)
             next = storage.get(path[index])
             level = level - 1
-        } else if (next is node) {
-            if (next.key equals key) {
+        else if (next is node)
+            if (next.key equals key)
                 // unmarshall value when match the key.
                 return next.value
-            }
             next = storage.get(next.next)
-        }
-    }
     return nil
-    finally locks[slot].readlock.unlock
 }
 ```
 
-## 8. mapdb的hash操作
+## 8. 性能基准测试
 
 ```
-init level = 4
-int hash = hash(key.hashcode)
-int index(hash, level) {
-    return (hash >>> ((level - 1)7)) & 127;
-}
-```
+Benchmark                                   Mode  Cnt         Score         Error  Units
+XDirectMapBenchmark.benchMapdbGet          thrpt    5    596524.301 ±   54782.085  ops/s
+XDirectMapBenchmark.benchMapdbPut          thrpt    5    194344.074 ±   10681.119  ops/s
 
-```
-example:
-int hash = 0110||1001110||1010010||1101001||0010011
-int slot = 0110 & 15
-if level = 4 then index = 1001110 & 127
-if level = 3 then index = 1010010 & 127
-if level = 2 then index = 1101001 & 127
-if level = 1 then index = 0010011 & 127
-```
+XDirectMapBenchmark.benchChronicleMapGet   thrpt    5   2534841.415 ±   93308.128  ops/s
+XDirectMapBenchmark.benchChronicleMapPut   thrpt    5    455725.397 ±   37235.009  ops/s
 
-## 9. 性能基准测试
+XDirectMapBenchmark.benchDirectGet         thrpt    5   4425757.740 ±  218460.919  ops/s
+XDirectMapBenchmark.benchDirectPut         thrpt    5   1114607.063 ±   33059.736  ops/s
 
-```
-Benchmark          Mode  Cnt         Score        Error  Units
-benchDirectGet    thrpt    5   3314123.305 ± 123395.048  ops/s
-benchMapdbGet     thrpt    5    684125.877 ± 104299.890  ops/s
-benchJemallocGet  thrpt    5  11175422.222 ± 537431.905  ops/s
-benchOakGet       thrpt    5    180117.220 ±  52702.784  ops/s
-benchOakZcGet     thrpt    5    216160.772 ±  88158.235  ops/s
+XDirectMapBenchmark.benchNopLockDirectGet  thrpt    5   4711437.701 ± 1359401.593  ops/s
+XDirectMapBenchmark.benchNopLockDirectPut  thrpt    5   1120465.074 ±   92480.872  ops/s
 
-benchDirectPut    thrpt    5    528279.275 ±  12701.195  ops/s
-benchMapdbPut     thrpt    5    275432.266 ± 127542.606  ops/s
-benchJemallocPut  thrpt    5    962102.121 ±  14491.815  ops/s
-benchOakPut       thrpt    5    469686.177 ± 122307.884  ops/s
-benchOakZcPut     thrpt    5    633389.915 ±  36848.268  ops/s
+XDirectMapBenchmark.benchJavallocGet       thrpt    5  10082063.184 ± 1298667.899  ops/s
+XDirectMapBenchmark.benchJavallocPut       thrpt    5   1360898.468 ±   40137.344  ops/s
+
 ```
