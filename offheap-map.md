@@ -28,9 +28,8 @@ int length = key.length + value.length
 long addr = malloc(length)
 put(addr, key, value)
 
-long node(addr) {
+long node(addr)
     return addr << 1 | 0
-}
 ```
 
 #### 1.3 path
@@ -38,9 +37,8 @@ long node(addr) {
 int length = 256 * 8
 long addr = malloc(length)
 
-long path(addr) {
+long path(addr)
     return addr << 1 | 1
-}
 ```
 
 #### 1.4 index
@@ -48,9 +46,8 @@ long path(addr) {
 # index
 init level = 3
 int hash = hash(key.hashcode)
-int index(hash, level) {
+int index(hash, level)
     return (hash >>> ((level - 1) * 8)) & 0xFF;
-}
 ```
 
 ```
@@ -252,8 +249,6 @@ put(key, value) {
 
 ```
 
-
-
 ## 7. 堆外内存管理
 
 #### 7.1 Path 压缩
@@ -285,12 +280,11 @@ put(addr, values)
 #### 7.2 Path, Node内存分配策略
 
 ```
-if (newlen <= oldlen / 2 || newlen > oldlen) {
-    addr = allocator.realloc(addr, newlen);
-}
+if (newlen <= oldlen / 2 or newlen > oldlen)
+    addr = realloc(addr, newlen)
 ```
 
-#### 7.3 反序列化与Value Lazy get
+#### 7.3 反序列化与Lazy get
 
 ```
 get(key)
@@ -301,16 +295,30 @@ get(key)
     while(next != nil)
         if (next is path)
             index = index(hash, level)
+            
+            // path lazy get
             next = storage.get(path[index])
             level = level - 1
         else if (next is node)
             if (next.key equals key)
+            
                 // unmarshall value when match the key.
                 return next.value
             next = storage.get(next.next)
     return nil
 }
 ```
+
+#### 7.4 内存利用率
+
+| Key Number | Allocated | Utilization |
+|------------|-----------|-------------|
+| 100000     | 12547K    | 0.94951445  |
+| 200000     | 25621K    | 0.93001527  |
+| 320000     | 42334K    | 0.90057003  |
+| 400000     | 53580K    | 0.88943195  |
+| 500000     | 67415K    | 0.88363045  |
+
 
 ## 8. 性能基准测试
 
