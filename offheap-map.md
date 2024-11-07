@@ -17,9 +17,8 @@
 ```
 # slot 决定图中root即蓝色框的index
 int hash = hash(key.hashcode)
-int slot(hash) {
+int slot(hash)
     return hash >>> 24
-}
 ```
 
 #### 1.2 node
