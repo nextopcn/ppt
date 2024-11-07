@@ -177,7 +177,6 @@ remove(key)
                 return
             next = storage.get(next.next)
     return
-
 ```
 
 ## 5. 迭代
@@ -221,9 +220,8 @@ insert key10
 
 ![thread-safe.png](offheapmap/thread-safe.png)
 
-```java  
-DirectMap<Integer, Integer> map = new DirectMap<>();
-get(key) {
+```  
+get(key)
     int hash = hash(key.hashcode)
     int slot = slot(hash)
     lock[slot].readlock.lock
@@ -232,10 +230,8 @@ get(key) {
         return value;
     finally 
         lock[slot].readlock.unlock
-    
-}
 
-put(key, value) {
+put(key, value)
     int hash = hash(key.hashcode)
     int slot = slot(hash)
     lock[slot].writelock.lock
@@ -244,8 +240,6 @@ put(key, value) {
         return oldvalue
     finally 
         lock[slot].writelock.unlock
-}
-
 ```
 
 ## 7. 堆外内存管理
@@ -253,27 +247,22 @@ put(key, value) {
 #### 7.1 Path 压缩
 
 ```
-int length = 128 * 8
+# 未优化需要像堆外写入256 * 8 字节
+int length = 256 * 8
 long addr = malloc(length)
 
-(1)
-long[] header = new long[2]
-int length = count(header);
-long[] values = new long[length]
+# 使用位图压缩示例
 
-long addr = malloc(2*8 + values.length*8);
+byte[] ary = {0, 0, 127, 0, 34, 0, 0, 0}
+byte header = 00101000
+byte[] value = {127, 34}
+
+long addr = malloc(header + value.length)
 put(addr, header)
-put(addr, values)
+put(addr + 1, 127)
+put(addr + 2, 34)
 
-(2)
-long[] header = new long[2]
-int length = count(header);
-length = Math.max(po2(length), 16);
-long[] values = new long[length]
-
-long addr = malloc(2*8 + values.length*8);
-put(addr, header)
-put(addr, values)
+# 优化后写入4 * 8 + values.length * 8字节
 ```
 
 #### 7.2 Path, Node内存分配策略
@@ -294,18 +283,15 @@ get(key)
     while(next != nil)
         if (next is path)
             index = index(hash, level)
-            
             // path lazy get
             next = storage.get(path[index])
             level = level - 1
         else if (next is node)
             if (next.key equals key)
-            
                 // unmarshall value when match the key.
                 return next.value
             next = storage.get(next.next)
     return nil
-}
 ```
 
 #### 7.4 内存利用率
