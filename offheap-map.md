@@ -42,7 +42,6 @@ long path(addr)
 
 #### 1.4 index
 ```
-# index
 init level = 3
 int hash = hash(key.hashcode)
 int index(hash, level)
