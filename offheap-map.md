@@ -136,12 +136,12 @@ put(key, val)
     path = new Path
     index = index(hash, level)
     path[index] = (key, val)
-    relocated(searchPaths, path, level)
+    relocate(searchPaths, path, level)
     return
 ```
 
 ```
-relocated(searchPaths, path, level)
+relocate(searchPaths, path, level)
     while (!searchPaths.isEmpty)
         next = searchPaths.removeLast;
         if(next is node) 
