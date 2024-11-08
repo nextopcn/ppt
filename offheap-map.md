@@ -140,6 +140,18 @@ put(key, val)
     return
 ```
 
+```
+relocated(searchPaths, path, level)
+    while (!searchPaths.isEmpty)
+        next = searchPaths.removeLast;
+        if(next is node) 
+            index = index(next.hash, level)
+            path[index] = next
+        else if(next is path)
+            next[index] = path
+            break
+```
+
 ## 4. 删除
 
 #### 4.1 删除某一结点
