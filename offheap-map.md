@@ -184,10 +184,21 @@ remove(key)
             level = level - 1
         else if (next is node)
             if (next.key equals key)
-                delete(searchPaths, key)
+                delete(searchPaths, next)
                 return
             next = storage.get(next.next)
     return
+```
+
+```
+delete(searchPaths, node) 
+    while (!searchPaths.isEmpty)
+        next = searchPaths.removeLast;
+        if(next is node) 
+            next.next = node.next
+        else if(next is path)
+            next[index] = node.next
+            break
 ```
 
 ## 5. 迭代
